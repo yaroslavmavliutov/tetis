@@ -1,0 +1,19 @@
+
+wx-config --list
+sudo apt-get purge wx3.1-headers                                                            // якшо дві версії
+sudo apt-get install wx2.8-headers libwxgtk2.8-0 libwxgtk2.8-dev                            // install wx2.8
+
+
+g++ `wx-config --cppflags` main.cpp Piece.cpp TetrisGame.cpp `wx-config --libs`
+./a.out
+АБО
+g++ -c `wx-config --cppflags` main.cpp Piece.cpp TetrisGame.cpp `wx-config --libs`
+g++ -o tetris `wx-config --cppflags` main.o Piece.o TetrisGame.o `wx-config --libs`
+./tetris
+
+------------------------------------------------
+sudo apt-get install libsfml-dev                                                            // install sfml
+
+g++ -c ml2.cpp
+g++ -o ml2 ml2.o -std=c++11 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
+./ml2
