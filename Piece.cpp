@@ -46,6 +46,8 @@ void Piece::SetRandomShape()
     SetShape(PieceShape(rand_shape_idx));
 }
 
+
+
 /* Good luck debugging this, suckers */
 DEFINEFINDMINMAX(XCOORD, min, MinX);
 DEFINEFINDMINMAX(XCOORD, max, MaxX);

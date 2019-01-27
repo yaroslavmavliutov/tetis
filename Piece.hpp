@@ -7,6 +7,7 @@
 /* Define all the different shapes we can have */
 enum PieceShape { None, Z, S, Line, T, Square, L, BackwardsL };
 
+
 const int pieceCoords[8][4][2] =
 {
     { {0,  0},  {0, 0},  {0,  0}, {0,  0} },
@@ -36,8 +37,10 @@ public:
     int MinY() const;
     int MaxY() const;
 
+
     Piece RotateLeft() const;
     Piece RotateRight() const;
+
 
 private:
     void SetX(int idx, int val) { coords[idx][XCOORD] = val; }

@@ -80,6 +80,7 @@ private:
     void PieceHitBottom();
     void ClearFullLines();
     void MakeNewPiece();
+    void RandomPiece();
     bool DoMove(const Piece& piece, int newX, int newY);
     void DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape shape);
 
@@ -89,6 +90,7 @@ private:
     bool paused;
     bool pieceDoneFalling;
     Piece current;
+    Piece next;
     int curX;
     int curY;
     int score;
@@ -107,9 +109,16 @@ class RightPanel : public wxPanel {
 public:
     RightPanel(wxPanel *parent_t, wxFrame *fr);
     void OnSetText(wxCommandEvent & event);
+    Piece piece;
     wxStaticText *m_text;
+    int x11;
+    int y11;
+
     wxStaticLine *sl1;
     wxStaticLine *sl2;
+
+    wxStaticText *st9;
+    wxStaticText *st10;
 };
 
 #endif

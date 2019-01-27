@@ -4,6 +4,7 @@
 
 #include "Commun.h"
 #include "TetrisGame.hpp"
+#include "Piece.hpp"
 
 Commun::Commun(const wxString& title)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))

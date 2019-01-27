@@ -32,6 +32,7 @@ Board::Board(wxPanel* parent_t, wxFrame *fr)
     curY = 0;
     count = 0;
     panel = parent_t;
+    next.SetRandomShape();
 
     Clear();
 
@@ -235,9 +236,29 @@ void Board::ClearFullLines()
     Refresh();
 }
 
+void Board::RandomPiece()
+{
+    current.SetShape(next.GetShape());
+    next.SetRandomShape();
+
+    Commun *comm = (Commun *) panel->GetParent();
+    /*for (int i = 0; i < 4; i++)
+    {
+        int x = next.x(i);
+        int y = next.y(i);
+        comm->m_rp->piece.DrawPiece(comm->m_rp->piece.dc(panel), x * comm->m_rp->piece.Width(), (comm->m_rp->piece.BoardHeight - y - 1) * comm->m_rp->piece.Height(),
+                                    next.GetShape())
+    }*/
+    comm->m_rp->m_text->SetLabel(wxString::Format(wxT("%d"), next.x(1)));
+    //comm->m_rp->piece.SetShape(next.GetShape());
+    //comm->m_rp->x11 = next.x(1);
+    //comm->m_rp->y11 = next.y(1);
+}
+
 void Board::MakeNewPiece()
 {
-    current.SetRandomShape();
+    //current.SetRandomShape();
+    RandomPiece();
     curX = BoardWidth / 2;
     curY = BoardHeight - 1 + current.MinY();
 
@@ -250,8 +271,8 @@ void Board::MakeNewPiece()
     }
     count++;
 
-    Commun *comm = (Commun *) panel->GetParent();
-    comm->m_rp->m_text->SetLabel(wxString::Format(wxT("%d"), count));
+    //Commun *comm = (Commun *) panel->GetParent();
+    //comm->m_rp->m_text->SetLabel(wxString::Format(wxT("%d"), count));
 }
 
 bool Board::DoMove(const Piece& piece, int newX, int newY)
@@ -299,18 +320,13 @@ void Board::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceShape)
 
 RightPanel::RightPanel(wxPanel * parent_t, wxFrame *fr)
         :wxPanel(parent_t, wxID_ANY, wxPoint(-1, 100), wxSize(390, 380), wxBORDER_SUNKEN)
-//: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(250, 380))
 {
-    /*wxStatusBar *statusBar = CreateStatusBar();
-    statusBar->SetStatusText(wxT("Score: 0"));
 
-    Board* board = new Board(this);
-    board->SetFocus();
-    board->Start();
-
-    srand(time(NULL));*/
     sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(25, 50), wxSize(350,1));
     m_text = new wxStaticText(this, -1, wxT("0"), wxPoint(40, 60));
+    //st9 = new wxStaticText(this, -1, wxString::Format(wxT("x..: %d"), this->x11), wxPoint(10, 160));
+    //st10 = new wxStaticText(this, -1, wxString::Format(wxT("y..: %d"), this->y11), wxPoint(10, 180));
+
     sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(25, 90), wxSize(350,1));
 }
 

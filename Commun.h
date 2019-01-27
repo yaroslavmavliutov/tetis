@@ -17,6 +17,7 @@ public:
     Board *m_lp;
     RightPanel *m_rp;
     //Friends *m_dp;
+    //Piece *newpiece;
     wxPanel *m_parent;
 
 };
