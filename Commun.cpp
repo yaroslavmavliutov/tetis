@@ -17,6 +17,7 @@ Commun::Commun(const wxString& title)
 
     Board *m_lp = new Board(m_parent, this);
     m_rp = new RightPanel(m_parent, this);
+    //m_dp = new Friends(m_parent, this);
 
     //Board* board = new Board(t_parent, fr);
     m_lp->SetFocus();
@@ -24,8 +25,9 @@ Commun::Commun(const wxString& title)
 
     srand(time(NULL));
 
-    hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
+    hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+    //hbox->Add(m_dp, 1, wxEXPAND | wxALL, 5);
 
     m_parent->SetSizer(hbox);
 

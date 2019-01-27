@@ -19,7 +19,7 @@ TetrisGame::TetrisGame(wxPanel * parent, wxFrame *fr)
 
 Board::Board(wxPanel* parent_t, wxFrame *fr)
 //: wxPanel(parent_t, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
-    : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_SUNKEN)
+    : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
 {
     timer = new wxTimer(this, 1);
     //statusBar = parent_t->GetStatusBar();
@@ -30,6 +30,8 @@ Board::Board(wxPanel* parent_t, wxFrame *fr)
     score = 0;
     curX = 0;
     curY = 0;
+    count = 0;
+    panel = parent_t;
 
     Clear();
 
@@ -246,6 +248,10 @@ void Board::MakeNewPiece()
         started = false;
         statusBar->SetStatusText(wxT("You Lose :("));
     }
+    count++;
+
+    Commun *comm = (Commun *) panel->GetParent();
+    comm->m_rp->m_text->SetLabel(wxString::Format(wxT("%d"), count));
 }
 
 bool Board::DoMove(const Piece& piece, int newX, int newY)
@@ -291,8 +297,8 @@ void Board::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceShape)
 }
 
 
-RightPanel::RightPanel(wxPanel * parent, wxFrame *fr)
-        :wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(180, 380), wxBORDER_SUNKEN)
+RightPanel::RightPanel(wxPanel * parent_t, wxFrame *fr)
+        :wxPanel(parent_t, wxID_ANY, wxPoint(-1, 100), wxSize(390, 380), wxBORDER_SUNKEN)
 //: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(250, 380))
 {
     /*wxStatusBar *statusBar = CreateStatusBar();
@@ -303,4 +309,15 @@ RightPanel::RightPanel(wxPanel * parent, wxFrame *fr)
     board->Start();
 
     srand(time(NULL));*/
+    sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(25, 50), wxSize(350,1));
+    m_text = new wxStaticText(this, -1, wxT("0"), wxPoint(40, 60));
+    sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(25, 90), wxSize(350,1));
 }
+
+
+/*Friends::Friends(wxPanel * parent_t, wxFrame *fr)
+        :wxPanel(parent_t, wxID_ANY, wxPoint(-1, 360), wxSize(180, 190), wxBORDER_SUNKEN)
+//: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(250, 380))
+{
+    //
+}*/

@@ -1,5 +1,6 @@
 #include <wx/wx.h>
 #include <wx/panel.h>
+#include <wx/statline.h>
 
 
 /*
@@ -91,6 +92,8 @@ private:
     int curX;
     int curY;
     int score;
+    int count;
+    wxPanel *panel;
     PieceShape board[BoardWidth * BoardHeight];
 };
 
@@ -102,8 +105,24 @@ private:
 #define PANEL_H
 class RightPanel : public wxPanel {
 public:
-    RightPanel(wxPanel *parent, wxFrame *fr);
+    RightPanel(wxPanel *parent_t, wxFrame *fr);
+    void OnSetText(wxCommandEvent & event);
+    wxStaticText *m_text;
+    wxStaticLine *sl1;
+    wxStaticLine *sl2;
 };
 
 #endif
+
+/*
+#ifndef FRIENDS_H
+#define FRIENDS_H
+class Friends : public wxPanel {
+public:
+    Friends(wxPanel *parent_t, wxFrame *fr);
+    //void OnSetText(wxCommandEvent & event);
+    //wxStaticText *m_text;
+};
+
+#endif*/
 
