@@ -6,14 +6,12 @@
 /*
 #ifndef TETRIS_H
 #define TETRIS_H
-
 class TetrisGame : public wxPanel
 {
 public:
    TetrisGame(wxPanel *parent, wxFrame *fr);
     wxPanel *t_parent;
 };
-
 #endif*/
 
 #ifndef _BOARD_HPP
@@ -25,7 +23,7 @@ public:
 
 const wxColour colors[] =
         {
-                wxColour(0, 0, 0),       wxColour(204, 102, 102),
+                wxColour(211, 211, 211),       wxColour(204, 102, 102),
                 wxColour(102, 204, 102), wxColour(102, 102, 204),
                 wxColour(204, 204, 102), wxColour(204, 102, 204),
                 wxColour(102, 204, 204), wxColour(218, 170, 0)
@@ -47,6 +45,12 @@ const wxColour dark[] =
                 wxColour(59, 128, 128), wxColour(128, 98, 0)
         };
 
+const int clearcoord[13][2] = {
+        {0,  0}, {0,  -1}, {-1, 0}, {-1, 1},
+        {1,  0}, {1,  1}, {0,  -1}, {0,  1},
+        {0,  2}, {-1, -1}, {1,  -1}, { -1,  2},
+        {1,  2}
+};
 
 class Board : public wxPanel
 {
@@ -94,7 +98,6 @@ private:
     int curX;
     int curY;
     int score;
-    int count;
     wxPanel *panel;
     PieceShape board[BoardWidth * BoardHeight];
 };
@@ -108,17 +111,20 @@ private:
 class RightPanel : public wxPanel {
 public:
     RightPanel(wxPanel *parent_t, wxFrame *fr);
-    void OnSetText(wxCommandEvent & event);
+    void ChangePeace();
+    void ClearPeace();
+    void DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape shape);
     Piece piece;
-    wxStaticText *m_text;
-    int x11;
-    int y11;
-
+    wxPanel *panel;
     wxStaticLine *sl1;
     wxStaticLine *sl2;
+    wxStaticText *string_nextpeace;
 
-    wxStaticText *st9;
-    wxStaticText *st10;
+    int Width;
+    int Height;
+    int BoardHeight;
+    int BoardWidth;
+    int top;
 };
 
 #endif
@@ -132,6 +138,5 @@ public:
     //void OnSetText(wxCommandEvent & event);
     //wxStaticText *m_text;
 };
-
 #endif*/
 
