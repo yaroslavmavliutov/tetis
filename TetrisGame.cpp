@@ -31,6 +31,7 @@ Board::Board(wxPanel* parent_t, wxFrame *fr)
     curY = 0;
     panel = parent_t;
     next.SetRandomShape();
+    TIMER_INTERVAL = 500;
     //RandomPiece();
 
     Clear();
@@ -51,7 +52,7 @@ void Board::Reset()
 
     statusBar->SetStatusText(wxT("Score: 0"));
     MakeNewPiece();
-    timer->Start(TIMER_INTERVAL);
+    timer->Start(this->TIMER_INTERVAL);
 }
 
 void Board::Start()
@@ -76,7 +77,7 @@ void Board::Pause()
     }
     else
     {
-        timer->Start(TIMER_INTERVAL);
+        timer->Start(this->TIMER_INTERVAL);
         wxString str;
         str.Printf(wxT("Score: %d"), score);
         statusBar->SetStatusText(str);
@@ -226,12 +227,14 @@ void Board::ClearFullLines()
         return;
 
     score += lines;
+    this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*20;
     wxString str;
     str.Printf(wxT("Score: %d"), score);
     statusBar->SetStatusText(str);
 
     pieceDoneFalling = true;
     current.SetShape(None);
+    timer->Start(this->TIMER_INTERVAL);
     Refresh();
 }
 
@@ -314,8 +317,8 @@ RightPanel::RightPanel(wxPanel * parent_t, wxFrame *fr)
     panel = parent_t;
     Width = 23;
     Height = 23;
-    BoardHeight = 80;
-    BoardWidth = 135;
+    y_draw = 80;
+    x_draw = 135;
     string_nextpeace = new wxStaticText(this, -1, wxString::Format(wxT("Next Peace")), wxPoint(110, 20));
     sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(15, 40), wxSize(270,1));
     sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(15, 170), wxSize(270,1));
@@ -349,14 +352,14 @@ void RightPanel::ChangePeace() {
     {
         int x = this->piece.x(i);
         int y = this->piece.y(i);
-        DrawNextPeace(dc, x * Width + BoardWidth, BoardHeight + y*Height, this->piece.GetShape());
+        DrawNextPeace(dc, x * Width + x_draw, y_draw + y*Height, this->piece.GetShape());
     }
 }
 
 void RightPanel::ClearPeace() {
     wxPaintDC dc(this);
     for (int i = 0; i < 13; i++) {
-        DrawNextPeace(dc, clearcoord[i][0] * Width + BoardWidth, BoardHeight + clearcoord[i][1]*Height, this->piece.GetShape());
+        DrawNextPeace(dc, clearcoord[i][0] * Width + x_draw, y_draw + clearcoord[i][1]*Height, this->piece.GetShape());
     }
 }
 

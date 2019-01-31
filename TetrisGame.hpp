@@ -19,8 +19,6 @@ public:
 
 #include "Piece.hpp"
 
-#define TIMER_INTERVAL 500
-
 const wxColour colors[] =
         {
                 wxColour(211, 211, 211),       wxColour(204, 102, 102),
@@ -99,6 +97,7 @@ private:
     int curY;
     int score;
     wxPanel *panel;
+    int TIMER_INTERVAL;
     PieceShape board[BoardWidth * BoardHeight];
 };
 
@@ -113,18 +112,19 @@ public:
     RightPanel(wxPanel *parent_t, wxFrame *fr);
     void ChangePeace();
     void ClearPeace();
-    void DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape shape);
     Piece piece;
+
+private:
+    void DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape shape);
+
     wxPanel *panel;
     wxStaticLine *sl1;
     wxStaticLine *sl2;
     wxStaticText *string_nextpeace;
-
     int Width;
     int Height;
-    int BoardHeight;
-    int BoardWidth;
-    int top;
+    int y_draw;
+    int x_draw;
 };
 
 #endif
