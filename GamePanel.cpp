@@ -16,9 +16,11 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
     curX = 0;
     curY = 0;
     panel = parent_t;
-    next.SetRandomShape();
     TIMER_INTERVAL = 500;
+    next.SetRandomShape();
+    //current.SetRandomShape();
 
+    //RandomPiece(); - цю треба тут, але з нею виходить переповнення
     Clear();
 
     Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
@@ -26,26 +28,22 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
     Connect(wxEVT_TIMER, wxCommandEventHandler(GamePanel::OnTimer));
 }
 
-void GamePanel::Reset()
-{
-    started = true;
-    pieceDoneFalling = false;
-    paused = false;
-    lvl = 1;
-
-    Clear();
-
-    status_scr->SetStatusText(wxT("Your lvl: 1"));
-    MakeNewPiece();
-    timer->Start(this->TIMER_INTERVAL);
-}
-
 void GamePanel::Start()
 {
     if (paused)
         return;
 
-    Reset();
+    started = true;
+    pieceDoneFalling = false;
+    paused = false;
+    lvl = 1;
+
+    //current.SetRandomShape();
+    //RandomPiece();
+
+    status_scr->SetStatusText(wxT("Your lvl: 1"));
+    MakeNewPiece();
+    timer->Start(this->TIMER_INTERVAL);
 }
 
 void GamePanel::Pause()
@@ -106,9 +104,6 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
     {
         case 'P':
             Pause();
-            return;
-        case 'R':
-            Reset();
             return;
     }
 
@@ -214,7 +209,7 @@ void GamePanel::ClearFullLines()
     else if (lines == 2) score+= CalculatorScore(100, lvl);
     else if (lines == 3) score+= CalculatorScore(300, lvl);
     else if (lines == 4) score+= CalculatorScore(1200, lvl);
-    
+
     lvl = score/500 + 1;
     this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*10;
     wxString str;

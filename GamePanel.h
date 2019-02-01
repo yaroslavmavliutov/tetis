@@ -37,7 +37,8 @@ public:
     GamePanel(wxPanel* parent_t, wxFrame *fr);
     void Start();
     void Pause();
-    void Reset();
+
+    PieceShape GetNextShape() const { return next.GetShape(); }
 
     /* wx event handlers */
 protected:
