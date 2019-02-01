@@ -1,5 +1,5 @@
-#ifndef _MAIN_HPP
-#define _MAIN_HPP
+#ifndef _MAIN_H
+#define _MAIN_H
 
 #include <wx/wx.h>
 

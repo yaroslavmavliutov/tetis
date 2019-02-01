@@ -1,22 +1,9 @@
-#include "TetrisGame.hpp"
-//#include "Board.hpp"
+#include "GamePanel.h"
+#include "InfoPanel.h"
+#include "Frame.h"
 #include <wx/stattext.h>
-#include "Commun.h"
-/*
-TetrisGame::TetrisGame(wxPanel * parent, wxFrame *fr)
-    //: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(180, 380), wxBORDER_SUNKEN)
-    : wxPanel(parent, -1, wxPoint(-1, -1), wxSize(-1, -1), wxBORDER_SUNKEN)
-{
-    t_parent = parent;
-    //wxStatusBar *statusBar = CreateStatusBar();
-    //statusBar->SetStatusText(wxT("Score: 0"));
-    Board* board = new Board(t_parent, fr);
-    board->SetFocus();
-    board->Start();
-    srand(time(NULL));
-}*/
 
-Board::Board(wxPanel* parent_t, wxFrame *fr)
+GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
 //: wxPanel(parent_t, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
         : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
 {
@@ -32,16 +19,15 @@ Board::Board(wxPanel* parent_t, wxFrame *fr)
     panel = parent_t;
     next.SetRandomShape();
     TIMER_INTERVAL = 500;
-    //RandomPiece();
 
     Clear();
 
-    Connect(wxEVT_PAINT, wxPaintEventHandler(Board::OnPaint));
-    Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(Board::OnKeyDown));
-    Connect(wxEVT_TIMER, wxCommandEventHandler(Board::OnTimer));
+    Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
+    Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GamePanel::OnKeyDown));
+    Connect(wxEVT_TIMER, wxCommandEventHandler(GamePanel::OnTimer));
 }
 
-void Board::Reset()
+void GamePanel::Reset()
 {
     started = true;
     pieceDoneFalling = false;
@@ -55,7 +41,7 @@ void Board::Reset()
     timer->Start(this->TIMER_INTERVAL);
 }
 
-void Board::Start()
+void GamePanel::Start()
 {
     if (paused)
         return;
@@ -63,7 +49,7 @@ void Board::Start()
     Reset();
 }
 
-void Board::Pause()
+void GamePanel::Pause()
 {
     if (!started)
         return;
@@ -85,7 +71,7 @@ void Board::Pause()
     Refresh();
 }
 
-void Board::OnPaint(wxPaintEvent& event)
+void GamePanel::OnPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(this);
 
@@ -113,7 +99,7 @@ void Board::OnPaint(wxPaintEvent& event)
     }
 }
 
-void Board::OnKeyDown(wxKeyEvent& event)
+void GamePanel::OnKeyDown(wxKeyEvent& event)
 {
     int keyCode = event.GetKeyCode();
 
@@ -155,7 +141,7 @@ void Board::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void Board::OnTimer(wxCommandEvent& event)
+void GamePanel::OnTimer(wxCommandEvent& event)
 {
     if (pieceDoneFalling)
     {
@@ -166,13 +152,13 @@ void Board::OnTimer(wxCommandEvent& event)
         DropCurrentOneLine();
 }
 
-void Board::Clear()
+void GamePanel::Clear()
 {
     for (int i = 0; i < BoardHeight * BoardWidth; i++)
         board[i] = None;
 }
 
-void Board::DropCurrentToBottom()
+void GamePanel::DropCurrentToBottom()
 {
     int y = curY;
     while (y)
@@ -181,13 +167,13 @@ void Board::DropCurrentToBottom()
     PieceHitBottom();
 }
 
-void Board::DropCurrentOneLine()
+void GamePanel::DropCurrentOneLine()
 {
     if (!DoMove(current, curX, curY - 1))
         PieceHitBottom();
 }
 
-void Board::PieceHitBottom()
+void GamePanel::PieceHitBottom()
 {
     for (int i = 0; i < 4; i++)
     {
@@ -200,7 +186,7 @@ void Board::PieceHitBottom()
         MakeNewPiece();
 }
 
-void Board::ClearFullLines()
+void GamePanel::ClearFullLines()
 {
     int lines = 0;
 
@@ -238,12 +224,12 @@ void Board::ClearFullLines()
     Refresh();
 }
 
-void Board::RandomPiece()
+void GamePanel::RandomPiece()
 {
     current.SetShape(next.GetShape());
     next.SetRandomShape();
 
-    Commun *comm = (Commun *) panel->GetParent();
+    Frame *comm = (Frame *) panel->GetParent();
 
     comm->m_rp->piece.SetShape(None);
     comm->m_rp->ClearPeace();
@@ -252,7 +238,7 @@ void Board::RandomPiece()
     comm->m_rp->ChangePeace();
 }
 
-void Board::MakeNewPiece()
+void GamePanel::MakeNewPiece()
 {
     //current.SetRandomShape();
     RandomPiece();
@@ -268,7 +254,7 @@ void Board::MakeNewPiece()
     }
 }
 
-bool Board::DoMove(const Piece& piece, int newX, int newY)
+bool GamePanel::DoMove(const Piece& piece, int newX, int newY)
 {
     for (int i = 0; i < 4; i++)
     {
@@ -288,7 +274,7 @@ bool Board::DoMove(const Piece& piece, int newX, int newY)
     return true;
 }
 
-void Board::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceShape)
+void GamePanel::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceShape)
 {
     wxPen lightPen(light[int(pieceShape)]);
     lightPen.SetCap(wxCAP_PROJECTING);
@@ -310,63 +296,3 @@ void Board::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceShape)
     dc.DrawRectangle(x + 1, y + 1, Width() - 2, Height() - 2);
 }
 
-
-RightPanel::RightPanel(wxPanel * parent_t, wxFrame *fr)
-        :wxPanel(parent_t, wxID_ANY, wxPoint(-1, 100), wxSize(390, 380), wxBORDER_SUNKEN)
-{
-    panel = parent_t;
-    Width = 23;
-    Height = 23;
-    y_draw = 80;
-    x_draw = 135;
-    string_nextpeace = new wxStaticText(this, -1, wxString::Format(wxT("Next Peace")), wxPoint(110, 20));
-    sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(15, 40), wxSize(270,1));
-    sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(15, 170), wxSize(270,1));
-}
-
-void RightPanel::DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape pieceShape) {
-
-    wxPen lightPen(light[int(pieceShape)]);
-    lightPen.SetCap(wxCAP_PROJECTING);
-    dc.SetPen(lightPen);
-
-    dc.DrawLine(x, y + Height - 1, x, y);
-    dc.DrawLine(x, y, x + Width - 1, y);
-
-    wxPen darkPen(dark[int(pieceShape)]);
-    darkPen.SetCap(wxCAP_PROJECTING);
-    dc.SetPen(darkPen);
-
-    dc.DrawLine(x + 1, y + Height - 1, x + Width - 1, y + Height - 1);
-    dc.DrawLine(x + Width - 1, y + Height - 1, x + Width - 1, y + 1);
-
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(wxBrush(colors[int(pieceShape)]));
-
-    dc.DrawRectangle(x + 1, y + 1, Width - 2, Height - 2);
-}
-
-void RightPanel::ChangePeace() {
-    wxPaintDC dc(this);
-    for (int i = 0; i < 4; i++)
-    {
-        int x = this->piece.x(i);
-        int y = this->piece.y(i);
-        DrawNextPeace(dc, x * Width + x_draw, y_draw + y*Height, this->piece.GetShape());
-    }
-}
-
-void RightPanel::ClearPeace() {
-    wxPaintDC dc(this);
-    for (int i = 0; i < 13; i++) {
-        DrawNextPeace(dc, clearcoord[i][0] * Width + x_draw, y_draw + clearcoord[i][1]*Height, this->piece.GetShape());
-    }
-}
-
-
-/*Friends::Friends(wxPanel * parent_t, wxFrame *fr)
-        :wxPanel(parent_t, wxID_ANY, wxPoint(-1, 360), wxSize(180, 190), wxBORDER_SUNKEN)
-//: wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(250, 380))
-{
-    //
-}*/

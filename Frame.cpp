@@ -2,11 +2,12 @@
 // Created by yaroslav on 25.01.19.
 //
 
-#include "Commun.h"
-#include "TetrisGame.hpp"
-#include "Piece.hpp"
+#include "Frame.h"
+#include "GamePanel.h"
+#include "InfoPanel.h"
+#include "Piece.h"
 
-Commun::Commun(const wxString& title)
+Frame::Frame(const wxString& title)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
 {
     m_parent = new wxPanel(this, wxID_ANY);
@@ -16,8 +17,8 @@ Commun::Commun(const wxString& title)
 
     wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
 
-    Board *m_lp = new Board(m_parent, this);
-    m_rp = new RightPanel(m_parent, this);
+    GamePanel *m_lp = new GamePanel(m_parent, this);
+    m_rp = new InfoPanel(m_parent, this);
     //m_dp = new Friends(m_parent, this);
 
     //Board* board = new Board(t_parent, fr);
