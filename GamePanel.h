@@ -66,9 +66,10 @@ private:
     void RandomPiece();
     bool DoMove(const Piece& piece, int newX, int newY);
     void DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape shape);
+    int CalculatorScore(int points, int n);
 
     wxTimer* timer;
-    wxStatusBar* statusBar;
+    wxStatusBar* status_scr;
     bool started;
     bool paused;
     bool pieceDoneFalling;
@@ -77,6 +78,7 @@ private:
     int curX;
     int curY;
     int score;
+    int lvl;
     wxPanel *panel;
     int TIMER_INTERVAL;
     PieceShape board[BoardWidth * BoardHeight];

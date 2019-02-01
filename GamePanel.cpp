@@ -7,12 +7,12 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
         : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
 {
     timer = new wxTimer(this, 1);
-    //statusBar = parent_t->GetStatusBar();
-    statusBar = fr->GetStatusBar();
+    status_scr = fr->GetStatusBar();
     pieceDoneFalling = false;
     started = false;
     paused = false;
     score = 0;
+    lvl = 1;
     curX = 0;
     curY = 0;
     panel = parent_t;
@@ -31,11 +31,11 @@ void GamePanel::Reset()
     started = true;
     pieceDoneFalling = false;
     paused = false;
-    score = 0;
+    lvl = 1;
 
     Clear();
 
-    statusBar->SetStatusText(wxT("Score: 0"));
+    status_scr->SetStatusText(wxT("Your lvl: 1"));
     MakeNewPiece();
     timer->Start(this->TIMER_INTERVAL);
 }
@@ -58,14 +58,14 @@ void GamePanel::Pause()
     if (paused)
     {
         timer->Stop();
-        statusBar->SetStatusText(wxT("Game Paused"));
+        status_scr->SetStatusText(wxT("Game Paused"));
     }
     else
     {
         timer->Start(this->TIMER_INTERVAL);
         wxString str;
-        str.Printf(wxT("Score: %d"), score);
-        statusBar->SetStatusText(str);
+        str.Printf(wxT("Your lvl: %d"), lvl);
+        status_scr->SetStatusText(str);
     }
     Refresh();
 }
@@ -210,17 +210,28 @@ void GamePanel::ClearFullLines()
 
     if (!lines)
         return;
-
-    score += lines;
+    if (lines == 1) score+= CalculatorScore(40, lvl);
+    else if (lines == 2) score+= CalculatorScore(100, lvl);
+    else if (lines == 3) score+= CalculatorScore(300, lvl);
+    else if (lines == 4) score+= CalculatorScore(1200, lvl);
+    
+    lvl = score/500 + 1;
     this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*10;
     wxString str;
-    str.Printf(wxT("Score: %d"), score);
-    statusBar->SetStatusText(str);
+    str.Printf(wxT("Your lvl: %d"), lvl);
+    status_scr->SetStatusText(str);
+
+    Frame *comm = (Frame *) panel->GetParent();
+    comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
 
     pieceDoneFalling = true;
     current.SetShape(None);
     timer->Start(this->TIMER_INTERVAL);
     Refresh();
+}
+
+int GamePanel::CalculatorScore(int points, int n) {
+    return points*(n+1);
 }
 
 void GamePanel::RandomPiece()
@@ -249,7 +260,7 @@ void GamePanel::MakeNewPiece()
         current.SetShape(None);
         timer->Stop();
         started = false;
-        statusBar->SetStatusText(wxT("You Lose :("));
+        status_scr->SetStatusText(wxT("You Lose :("));
     }
 }
 

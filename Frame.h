@@ -13,6 +13,7 @@ public:
     GamePanel *m_lp;
     InfoPanel *m_rp;
     wxPanel *m_parent;
+    wxStatusBar *statusScore;
 
 };
 #endif

@@ -39,7 +39,6 @@ public:
 
 
     Piece Rotation() const;
-    //Piece RotateRight() const;
 
 
 private:

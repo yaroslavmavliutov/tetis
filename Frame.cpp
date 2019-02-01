@@ -8,8 +8,9 @@ Frame::Frame(const wxString& title)
 {
     m_parent = new wxPanel(this, wxID_ANY);
 
-    wxStatusBar *statusBar = CreateStatusBar();
-    statusBar->SetStatusText(wxT("Score: 0"));
+    statusScore = CreateStatusBar();
+    statusScore->SetStatusText(wxT("Your lvl: 1"));
+
 
     wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
 

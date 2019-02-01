@@ -20,7 +20,9 @@ public:
     InfoPanel(wxPanel *parent_t, wxFrame *fr);
     void ChangePeace();
     void ClearPeace();
+    void DrawScore(int score);
     Piece piece;
+    wxStaticText *string_score;
 
 private:
     void DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape shape);
@@ -29,6 +31,7 @@ private:
     wxStaticLine *sl1;
     wxStaticLine *sl2;
     wxStaticText *string_nextpeace;
+
     int Width;
     int Height;
     int y_draw;
