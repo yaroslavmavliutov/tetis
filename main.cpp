@@ -1,9 +1,9 @@
 #include "main.hpp"
 #include "TetrisGame.hpp"
 
-#ifdef __WXMAC__
-#include <ApplicationServices/ApplicationServices.h>
-#endif /* __WXMAC__ */
+//#ifdef __WXMAC__
+//#include <ApplicationServices/ApplicationServices.h>
+//#endif /* __WXMAC__ */
 
 /*
 IMPLEMENT_APP(TetrisApp);

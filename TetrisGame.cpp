@@ -227,7 +227,7 @@ void Board::ClearFullLines()
         return;
 
     score += lines;
-    this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*20;
+    this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*10;
     wxString str;
     str.Printf(wxT("Score: %d"), score);
     statusBar->SetStatusText(str);
