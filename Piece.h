@@ -1,5 +1,5 @@
-#ifndef _PIECE_HPP
-#define _PIECE_HPP
+#ifndef _PIECE_H
+#define _PIECE_H
 
 #define XCOORD 0
 #define YCOORD 1
@@ -38,8 +38,8 @@ public:
     int MaxY() const;
 
 
-    Piece RotateLeft() const;
-    Piece RotateRight() const;
+    Piece Rotation() const;
+    //Piece RotateRight() const;
 
 
 private:

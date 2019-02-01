@@ -1,7 +1,3 @@
-//
-// Created by yaroslav on 25.01.19.
-//
-
 #ifndef FRAME_H
 #define FRAME_H
 

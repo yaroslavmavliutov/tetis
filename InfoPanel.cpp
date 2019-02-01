@@ -1,7 +1,3 @@
-//
-// Created by yaroslav on 01.02.19.
-//
-
 #include "InfoPanel.h"
 #include <wx/stattext.h>
 

@@ -4,7 +4,6 @@
 #include <wx/stattext.h>
 
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
-//: wxPanel(parent_t, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
         : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
 {
     timer = new wxTimer(this, 1);
@@ -125,7 +124,7 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
             DropCurrentToBottom();
             break;
         case WXK_UP:
-            DoMove(current.RotateLeft(), curX, curY);
+            DoMove(current.Rotation(), curX, curY);
             break;
         case WXK_DOWN:
             DropCurrentOneLine();

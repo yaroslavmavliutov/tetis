@@ -1,12 +1,11 @@
-#include <wx/wx.h>
-#include <wx/panel.h>
-#include <wx/statline.h>
-
-
 #ifndef _GAMEPANEL_HPP
 #define _GAMEPANEL_HPP
 
 #include "Piece.h"
+
+#include <wx/wx.h>
+#include <wx/panel.h>
+#include <wx/statline.h>
 
 const wxColour colors[] =
         {

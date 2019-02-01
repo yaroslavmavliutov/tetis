@@ -1,7 +1,3 @@
-//
-// Created by yaroslav on 01.02.19.
-//
-
 #ifndef TETIS_INFOPANEL_H
 #define TETIS_INFOPANEL_H
 

@@ -1,7 +1,3 @@
-//
-// Created by yaroslav on 25.01.19.
-//
-
 #include "Frame.h"
 #include "GamePanel.h"
 #include "InfoPanel.h"
@@ -19,9 +15,7 @@ Frame::Frame(const wxString& title)
 
     GamePanel *m_lp = new GamePanel(m_parent, this);
     m_rp = new InfoPanel(m_parent, this);
-    //m_dp = new Friends(m_parent, this);
 
-    //Board* board = new Board(t_parent, fr);
     m_lp->SetFocus();
     m_lp->Start();
 
@@ -29,7 +23,6 @@ Frame::Frame(const wxString& title)
 
     hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
-    //hbox->Add(m_dp, 1, wxEXPAND | wxALL, 5);
 
     m_parent->SetSizer(hbox);
 

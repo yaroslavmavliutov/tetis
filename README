@@ -7,8 +7,8 @@ sudo apt-get install wx2.8-headers libwxgtk2.8-0 libwxgtk2.8-dev                
 g++ `wx-config --cppflags` main.cpp Piece.cpp TetrisGame.cpp `wx-config --libs`
 ./a.out
 АБО
-g++ -c `wx-config --cppflags` main.cpp Piece.cpp TetrisGame.cpp Commun.cpp `wx-config --libs`
-g++ -o tetris `wx-config --cppflags` main.o Piece.o TetrisGame.o Commun.o `wx-config --libs`
+g++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp `wx-config --libs`
+g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o `wx-config --libs`
 ./tetris
 
 ------------------------------------------------
