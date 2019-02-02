@@ -9,7 +9,7 @@
 using namespace std;
 using namespace sf;
 
-const unsigned short PORT = 5000;
+const unsigned short PORT = 4444;
 sf::IpAddress IPADDRESS = sf::IpAddress::getLocalAddress();
 
 //client

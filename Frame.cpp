@@ -23,7 +23,7 @@ Frame::Frame(const wxString& title)
     srand(time(NULL));
 
     hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
-    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+    hbox->Add(m_rp, 0, wxSHAPED | wxALL, 5);
 
     m_parent->SetSizer(hbox);
 
