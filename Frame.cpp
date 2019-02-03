@@ -56,18 +56,12 @@ Frame::Frame(const wxString& title, int type_machine)
         m_rp = new InfoPanel(m_parent, this);
         printf( "CREATION  4 from process %d of %d\n", rank, size );
 
-<<<<<<< HEAD
-    hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
-    hbox->Add(m_rp, 0, wxSHAPED | wxALL, 5);
-=======
         m_lp->SetFocus();
         m_lp->Start();
->>>>>>> 2f706f5b0557031414007c3ca63092560d6aa1cc
-
         srand(time(NULL));
 
         hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
-        hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+        hbox->Add(m_rp, 0, wxSHAPED | wxALL, 5);
 
         m_parent->SetSizer(hbox);
 
