@@ -11,9 +11,17 @@ g++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPan
 g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o `wx-config --libs`
 ./tetris
 
++ MPI
+
+mpic++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp client_server.cpp `wx-config --libs` -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
+mpic++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o client_server.o `wx-config --libs` -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
+
+mpirun -np 2 ./tetris
+./
 ------------------------------------------------
 sudo apt-get install libsfml-dev                                                            // install sfml
 
 g++ -c ml2.cpp
 g++ -o ml2 ml2.o -std=c++11 -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 ./ml2
+
