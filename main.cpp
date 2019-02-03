@@ -12,7 +12,7 @@ bool TetrisApp::OnInit()
     MPI_Comm_size (MPI_COMM_WORLD, &size);        // get number of processes
     printf( "MAIN from process %d of %d\n", rank, size );
 
-
+ // try realise -client + tetris
     if (rank == 1)
         sleep(10);
     if (rank == 0) {

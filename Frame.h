@@ -21,8 +21,8 @@ public:
     void OnQuit(wxCommandEvent & event);
     void OnNew(wxCommandEvent & event);
 
-    wxMenuBar *menubar;
-    wxMenu *file;
+    wxMenuBar *menubar; // new
+    wxMenu *file; // File + vkladki
     wxMenuItem *quit;
 };
 const int ID_NEW = 111;

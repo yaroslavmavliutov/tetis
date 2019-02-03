@@ -33,7 +33,7 @@ public:
     std::string msgReceived;
     void client(void);
     void server(void);
-    void main_v(void);
+    void main_v(void); // ne pache
 
 };
 

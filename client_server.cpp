@@ -125,8 +125,10 @@ void client_server::main_v()
     std::cout << "Do you want to be a server (s) or a client (c) ? ";
     std::cin >> who;
 
-    if (who == 's')
+    if (who == 's') {
         server();
-    if (who == 'c')
+    }
+    if (who == 'c'){
         client();
+    }
 }

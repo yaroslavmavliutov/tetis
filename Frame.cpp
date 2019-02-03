@@ -18,7 +18,7 @@ Frame::Frame(const wxString& title, int type_machine)
     //MPI init
     printf( "FRAME from process %d of %d\n", rank, size );
 
-    if(rank == 0)
+    if(rank == 0) // for 2 threads
     {
         m_parent = new wxPanel(this, wxID_ANY);
         menubar = new wxMenuBar; // menu
