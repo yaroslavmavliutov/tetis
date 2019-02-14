@@ -1,11 +1,13 @@
 #include "main.h"
 #include "Frame.h"
 #include <unistd.h>
+#include <chrono>
 
 IMPLEMENT_APP(TetrisApp);
 
 bool TetrisApp::OnInit()
 {
+<<<<<<< HEAD
     int rank, size;
     int argc = 1;
     MPI_Init (&argc, NULL);      // starts MPI
@@ -49,6 +51,10 @@ bool TetrisApp::OnInit()
     }
     MPI_Finalize();
 
+=======
+    Frame *server = new Frame(wxT("Tetris"));
+    server->Show(true);
+>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
 
     return true;
 }

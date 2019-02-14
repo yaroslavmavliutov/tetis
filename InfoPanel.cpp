@@ -14,7 +14,13 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr)
     sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 40), wxSize(285,1));
     sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 170), wxSize(285,1));
     //string_score = new wxStaticText(this, -1, wxString::Format(wxT("Score: 0")), wxPoint(110, 190));
+<<<<<<< HEAD
     string_score = new wxStaticText(this, -1, wxT("Score: 0"), wxPoint(100, 190));
+=======
+    string_score = new wxStaticText(this, -1, wxT("Score: 0"), wxPoint(110, 190));
+
+
+>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
 }
 
 void InfoPanel::DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape pieceShape) {
@@ -57,5 +63,12 @@ void InfoPanel::ClearPeace() {
 }
 
 void InfoPanel::DrawScore(int score) {
+<<<<<<< HEAD
     this->string_score = new wxStaticText(this, -1, wxString::Format(wxT("Score: %d"), score), wxPoint(105, 190));
 }
+=======
+    this->string_score = new wxStaticText(this, -1, wxString::Format(wxT("Score: %d"), score), wxPoint(110, 190));
+}
+
+
+>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14

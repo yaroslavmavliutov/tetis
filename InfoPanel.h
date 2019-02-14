@@ -8,6 +8,7 @@
 #include <wx/panel.h>
 #include <wx/statline.h>
 
+
 const int clearcoord[13][2] = {
         {0,  0}, {0,  -1}, {-1, 0}, {-1, 1},
         {1,  0}, {1,  1}, {0,  -1}, {0,  1},
@@ -23,6 +24,7 @@ public:
     void DrawScore(int score);
     Piece piece;
     wxStaticText *string_score;
+
 
 private:
     void DrawNextPeace(wxPaintDC& dc, int x, int y, PieceShape shape);

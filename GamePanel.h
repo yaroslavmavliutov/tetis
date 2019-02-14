@@ -43,7 +43,6 @@ public:
     GamePanel(wxPanel* parent_t, wxFrame *fr);
     void Start();
     void Pause();
-
     PieceShape GetNextShape() const { return next.GetShape(); }
 
 protected:

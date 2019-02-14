@@ -1,20 +1,22 @@
 //
-// Created by nazar on 2/2/19.
+// Created by nazar on 2/12/19.
 //
 
-#ifndef TETIS_CLIENT_SERVER_H
-#define TETIS_CLIENT_SERVER_H
+#ifndef TETIS_MYTHREAD_H
+#define TETIS_MYTHREAD_H
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-
+#include <wx/wx.h>
 using namespace std;
 using namespace sf;
 
-class client_server {
+class MyThread: public wxThread {
 public:
-
+    MyThread(int inter):
+        th_iter(inter){}
+    virtual void *Entry();
     const unsigned short PORT = 4444;
     IpAddress IPADDRESS = sf::IpAddress::getLocalAddress();
 
@@ -31,11 +33,9 @@ public:
 //Message
     std::string msgSend;
     std::string msgReceived;
-    void client(void);
-    void server(void);
-    void main_v(void); // ne pache
-
+private:
+    int th_iter;
 };
 
-
-#endif //TETIS_CLIENT_SERVER_H
+#define ID_COUNTED 100
+#endif //TETIS_MYTHREAD_H
