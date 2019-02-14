@@ -10,15 +10,16 @@ Frame::Frame(const wxString& title, int type_machine)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
 {
     //MPI init
-    int rank, size;
+    /*int rank, size;
     int argc = 1;
     //MPI_Init (&argc, NULL);      // starts MPI
     MPI_Comm_rank (MPI_COMM_WORLD, &rank);        // get current process id
     MPI_Comm_size (MPI_COMM_WORLD, &size);        // get number of processes
     //MPI init
-    printf( "FRAME from process %d of %d\n", rank, size );
+    printf( "FRAME from process %d of %d\n", rank, size );*/
 
-    if(rank == 0) // for 2 threads
+    //if(rank == 0) // for 2 threads
+    if (true)
     {
         m_parent = new wxPanel(this, wxID_ANY);
         menubar = new wxMenuBar; // menu
@@ -47,14 +48,14 @@ Frame::Frame(const wxString& title, int type_machine)
         statusScore = CreateStatusBar();
         statusScore->SetStatusText(wxT("Your lvl: 1"));
 
-        printf( "CREATION 1from process %d of %d\n", rank, size );
+        //printf( "CREATION 1from process %d of %d\n", rank, size );
         wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
-        printf( "CREATION 2from process %d of %d\n", rank, size );
+        //printf( "CREATION 2from process %d of %d\n", rank, size );
 
         GamePanel *m_lp = new GamePanel(m_parent, this);
-        printf( "CREATION  3 from process %d of %d\n", rank, size );
+        //printf( "CREATION  3 from process %d of %d\n", rank, size );
         m_rp = new InfoPanel(m_parent, this);
-        printf( "CREATION  4 from process %d of %d\n", rank, size );
+        //printf( "CREATION  4 from process %d of %d\n", rank, size );
 
         m_lp->SetFocus();
         m_lp->Start();
@@ -66,7 +67,7 @@ Frame::Frame(const wxString& title, int type_machine)
         m_parent->SetSizer(hbox);
 
         this->Centre();
-        printf( "CREATION  5 from process %d of %d\n", rank, size );
+        //printf( "CREATION  5 from process %d of %d\n", rank, size );
     }
     //MPI_Finalize();
 }
