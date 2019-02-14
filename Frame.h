@@ -20,6 +20,7 @@ public:
     wxPanel *m_parent;
     wxStatusBar *statusScore;
     void OnQuit(wxCommandEvent & event);
+    void OnNew();
     void OnNew(wxCommandEvent & event);
     void OnCreate(wxCommandEvent & event);
     void OnJoin(wxCommandEvent & event);

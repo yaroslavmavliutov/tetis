@@ -9,50 +9,37 @@ using namespace sf;
 Frame::Frame(const wxString& title)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
 {
-        m_parent = new wxPanel(this, wxID_ANY);
-        menubar = new wxMenuBar; // menubar
-        file = new wxMenu; //menu
+    m_parent = new wxPanel(this, wxID_ANY);
+    menubar = new wxMenuBar; // menubar
+    file = new wxMenu; //menu
 
-        file->Append(ID_NEW, wxT("&Start page"));
-        file->Append(ID_CREATE, wxT("&Create game"));
-        file->Append(ID_JOIN, wxT("&Join game"));
-        file->Append(wxID_ANY, wxT("&Help"));
-        file->Append(wxID_ANY, wxT("&Get_IP"));
+    file->Append(ID_NEW, wxT("&Start page"));
+    file->Append(ID_CREATE, wxT("&Create game"));
+    file->Append(ID_JOIN, wxT("&Join game"));
+    file->Append(wxID_ANY, wxT("&Help"));
+    file->Append(wxID_ANY, wxT("&Get_IP"));
 
-        file->AppendSeparator();
+    file->AppendSeparator();
 
-        file->Append(wxID_EXIT, wxT("&Quit\tCtrl+W"));
+    file->Append(wxID_EXIT, wxT("&Quit\tCtrl+W"));
 
-        Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
-                wxCommandEventHandler(Frame::OnQuit));
+    Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(Frame::OnQuit));
 
-        Connect(ID_NEW, wxEVT_COMMAND_MENU_SELECTED,
-                wxCommandEventHandler(Frame::OnNew));
+    Connect(ID_NEW, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(Frame::OnNew));
 
-        Connect(ID_CREATE, wxEVT_COMMAND_MENU_SELECTED,
-                wxCommandEventHandler(Frame::OnCreate));
+    Connect(ID_CREATE, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(Frame::OnCreate));
 
-        Connect(ID_JOIN, wxEVT_COMMAND_MENU_SELECTED,
-                wxCommandEventHandler(Frame::OnJoin));
+    Connect(ID_JOIN, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(Frame::OnJoin));
 
-        Center();
+    Center();
 
-        menubar->Append(file, wxT("&File"));
-        SetMenuBar(menubar);
+    menubar->Append(file, wxT("&File"));
+    SetMenuBar(menubar);
 
-
-
-
-}
-
-void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
-{
-    Close(true);
-}
-
-void Frame::OnNew(wxCommandEvent& WXUNUSED(event)) {
-
-    Frame *comm = (Frame *) m_parent->GetParent();
     statusScore = CreateStatusBar();
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
@@ -76,7 +63,20 @@ void Frame::OnNew(wxCommandEvent& WXUNUSED(event)) {
     this->Centre();
 }
 
+void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
+{
+    Close(true);
+}
 
+void Frame::OnNew(wxCommandEvent& WXUNUSED(event)) {
+
+    m_rp->Destroy();
+}
+
+void Frame::OnNew() {
+
+
+}
 
 void Frame::OnCreate(wxCommandEvent& WXUNUSED(event))
 {
