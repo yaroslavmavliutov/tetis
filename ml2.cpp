@@ -35,6 +35,7 @@ void client(void)
     cout << "Name: ";
     cin >> pseudo;
 
+    cout << IPADDRESS;
     if (socket.connect(IPADDRESS, PORT) == Socket::Done)
     {
         cout << "Connection accepted" << endl;
@@ -90,6 +91,7 @@ void server(void)
         exit(0);
 
     selector.add(listener);
+    cout << "IP_server"<<IPADDRESS <<endl;
 
     while (done)
     {

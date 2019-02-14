@@ -3,7 +3,6 @@
 
 #include <wx/wx.h>
 #include "Frame.h"
-#include "client_server.h" // new
 
 class TetrisApp : public wxApp
 {

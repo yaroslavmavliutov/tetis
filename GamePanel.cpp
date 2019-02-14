@@ -2,6 +2,7 @@
 #include "InfoPanel.h"
 #include "Frame.h"
 #include <wx/stattext.h>
+#include <chrono>
 
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
         : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
@@ -38,12 +39,19 @@ void GamePanel::Start()
     paused = false;
     lvl = 1;
 
+
     //current.SetRandomShape();
     //RandomPiece();
+
+
+
+
 
     status_scr->SetStatusText(wxT("Your lvl: 1"));
     MakeNewPiece();
     timer->Start(this->TIMER_INTERVAL);
+
+
 }
 
 void GamePanel::Pause()
@@ -300,4 +308,5 @@ void GamePanel::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceSha
 
     dc.DrawRectangle(x + 1, y + 1, Width() - 2, Height() - 2);
 }
+
 
