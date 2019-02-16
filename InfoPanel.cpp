@@ -2,10 +2,11 @@
 #include <wx/stattext.h>
 
 
-InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, std::map<std::string, int> opponents)
+InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr)
+//InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, std::map<std::string, int> opponents)
         :wxPanel(parent_t, wxID_ANY, wxPoint(190, 5), wxSize(305, 345), wxBORDER_SUNKEN)
 {
-    my_opponents = opponents;
+    //my_opponents = opponents;
     panel = parent_t;
     Width = 23;
     Height = 23;

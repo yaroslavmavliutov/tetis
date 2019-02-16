@@ -1,15 +1,26 @@
 
+//#include "Frame.h"
+//
+//// frame constructor
+//Frame::Frame(const wxString& title)
+//        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(1000, 650)
+//        ,wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
 #include "Frame.h"
+#include "GamePanel.h"
+#include "InfoPanel.h"
+#include "Piece.h"
 
-// frame constructor
+using namespace std;
+using namespace sf;
+
 Frame::Frame(const wxString& title)
-        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(1000, 650)
-        ,wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
+        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
 {
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
     busy = false;
     menubar = new wxMenuBar; // menubar
+
     file = new wxMenu; //menu
 
     file->Append(ID_PLAY, wxT("&Start play"));
@@ -17,6 +28,11 @@ Frame::Frame(const wxString& title)
     file->Append(ID_JOIN, wxT("&Join game"));
     file->Append(ID_HELP, wxT("&Help"));
     file->Append(wxID_EXIT, wxT("&Quit\tCtrl+W"));
+
+
+    file->Append(CLIENT_OPEN, "&Open session\tAlt-O","Connect to server");
+    file->Append(CLIENT_CLOSE,"&Close session\tAlt-C","Close connection");
+    file->Append(Minimal_Quit, "E&xit\tAlt-X", "Quit this program");
 
     file->AppendSeparator();
 
@@ -40,56 +56,39 @@ Frame::Frame(const wxString& title)
     Connect(ID_PLAY, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(Frame::OnPlay));
 
-    Center();
-
-    menubar->Append(file, wxT("&File"));
-    SetMenuBar(menubar);
-
-
-    m_text  = new wxTextCtrl(this, -1,
-                             _("Welcome to wxSocket demo: Client\nClient ready\n"),
-                             wxDefaultPosition, wxDefaultSize,
-                             wxTE_MULTILINE | wxTE_READONLY);
-=======
+//=======
     // set the frame icon
 
 
 #if wxUSE_MENUS
     // create a menu bar
-	fileMenu = new wxMenu;
+	//fileMenu = new wxMenu;
 
 	// the "About" item should be in the help menu
-	helpMenu = new wxMenu;
-	helpMenu->Append(Minimal_About, "&About\tF1", "Show about dialog");
-
-	fileMenu->Append(CLIENT_OPEN, "&Open session\tAlt-O","Connect to server");
-	fileMenu->Append(CLIENT_CLOSE,"&Close session\tAlt-C","Close connection");
-	fileMenu->Append(Minimal_Quit, "E&xit\tAlt-X", "Quit this program");
+	//helpMenu = new wxMenu;
+	//helpMenu->Append(Minimal_About, "&About\tF1", "Show about dialog");
 
 	// now append the freshly created menu to the menu bar...
-	wxMenuBar *menuBar = new wxMenuBar();
-	menuBar->Append(fileMenu, "&File");
-	menuBar->Append(helpMenu, "&Help");
+	//wxMenuBar *menuBar = new wxMenuBar();
+	//menuBar->Append(fileMenu, "&File");
+	//menuBar->Append(helpMenu, "&Help");
 
 	// ... and attach this menu bar to the frame
-	SetMenuBar(menuBar);
+	//SetMenuBar(menuBar);
+	Center();
+
+    menubar->Append(file, wxT("&File"));
+    SetMenuBar(menubar);
 #endif // wxUSE_MENUS
 
 #if wxUSE_STATUSBAR
     // create a status bar just for fun (by default with 1 pane only)
 	CreateStatusBar(2);
 	SetStatusText("TCP client using wxWidgets");
-#endif // wxUSE_STATUSBAR
-/*    btnSend = new wxButton(this, ID_BTNSEND, wxT("Send"),
-                           wxPoint(5, 5), wxSize(100, 25));
-    txtSend = new wxTextCtrl(this,ID_TXTSEND, wxT("Hello!"),
-                             wxPoint(120, 5), wxSize(250, 25));./
-    txtRx = new wxTextCtrl(this,ID_TXTRX, wxT(""),
-                           wxPoint(5, 35), wxSize(365, 125), wxTE_MULTILINE);
 
-    Connect(ID_BTNSEND, wxEVT_COMMAND_BUTTON_CLICKED,
-            wxCommandEventHandler(Frame::OnSend));
-*/
+#endif // wxUSE_STATUSBAR
+
+
     sock = new wxSocketClient();
 
     // Setup the event handler and subscribe to most events
@@ -99,46 +98,28 @@ Frame::Frame(const wxString& title)
                     wxSOCKET_LOST_FLAG);
     sock->Notify(true);
 
-    m_parent = new wxPanel(this, wxID_ANY);
+    /*m_parent = new wxPanel(this, wxID_ANY);
     wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
 
     GamePanel *m_lp = new GamePanel(m_parent, this, sock);
-    m_rp = new InfoPanel(m_parent, this);
->>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
+    m_rp = new InfoPanel(m_parent, this);*/
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 
-    //SetStatusText(_("Welcome to wxWidgets!"));
-    //string_score = new wxStaticText(this, -1, wxString::Format(wxT("Score")), wxPoint(110, 190));
-    //wxPaintDC dc(this);
-    //dc.DrawText(wxT("Лев Николaевич Толстoй"), 150, 200);
-    //font = new wxFont(18, wxDECORATIVE, wxITALIC, wxNORMAL);
-    //string_score->SetFont(font);
-    //string_score = new wxStaticText(this, -1, wxString::Format(wxT("Score")), wxPoint(110, 190));
+    m_text  = new wxTextCtrl(this, -1,
+                             _("Welcome to wxSocket demo: Client\nClient ready\n"),
+                             wxDefaultPosition, wxDefaultSize,
+                             wxTE_MULTILINE | wxTE_READONLY);
 
-<<<<<<< HEAD
+
+
+
+//<<<<<<< HEAD
 }
 
 void Frame::Setbusy(bool meaning) {
     this->busy = meaning;
 }
 
-
-=======
-    m_lp->SetFocus();
-    m_lp->Start();
-
-    srand(time(NULL));
-
-    hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
-
-
-    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
-
-    m_parent->SetSizer(hbox);
-    this->Centre();
-
-    // Create the socket
-
-}
 
 Frame::~Frame()
 {
@@ -147,14 +128,17 @@ Frame::~Frame()
 }
 
 // event handlers
->>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
+
+
+
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
 // true is to force the frame to close
     Close(true);
 }
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 void Frame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
     Refresh();
 
@@ -190,12 +174,13 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     //GamePanel *m_lp = new GamePanel(m_parent, this);
     m_lp = new GamePanel(m_parent, this);
 
-    std::map<std::string, int> my_map = {
+    /*std::map<std::string, int> my_map = {
             { "A", 1 },
             { "B", 2 },
             { "C", 3 }
-    };
-    m_rp = new InfoPanel(m_parent, this, my_map);
+    };*/
+    m_rp = new InfoPanel(m_parent, this);
+    //m_rp = new InfoPanel(m_parent, this, my_map);
 
     m_lp->SetFocus();
     m_lp->Start();
@@ -211,8 +196,10 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     m_parent->SetSizer(hbox);
 
     this->Centre();
-=======
-void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
+}
+//=======
+
+/*void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox(wxString::Format
                          (
@@ -224,27 +211,13 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
                  "About wxWidgets TCP client sample",
                  wxOK | wxICON_INFORMATION,
                  this);
-}
-/*
-void Frame::OnSend(wxCommandEvent& WXUNUSED(event))
-{
-    wxString str = txtSend->GetValue();
-    wxCharBuffer buffer = str.ToUTF8();
-    size_t txn = str.length();
+}*/
 
-    unsigned char len;
-    len = txn;
-    sock->Write(&len, 1);//send the length of the message first
-    if (sock->Write(buffer.data(), txn).LastCount() != txn)
-    {
-    txtRx->AppendText(wxT("Write error.\n"));
-    return;
-    }
-    else {
-    txtRx->AppendText("Tx: " + str + "\n");
-    }
-}
-*/
+
+
+
+
+
 void Frame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
 {
     // Create the address - defaults to localhost:0 initially
@@ -263,8 +236,8 @@ void Frame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
     addr.Service(3000);
     std::cout<<"Trying to connect to " << addr.IPAddress() << " : " << addr.Service() << std::endl;
 
-    fileMenu->Enable(CLIENT_OPEN, false);
-    fileMenu->Enable(CLIENT_CLOSE, false);
+    file->Enable(CLIENT_OPEN, false);
+    file->Enable(CLIENT_CLOSE, false);
     // we connect asynchronously and will get a wxSOCKET_CONNECTION event when
     // the connection is really established
     //
@@ -280,7 +253,7 @@ void Frame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
 void Frame::OnCloseConnection(wxCommandEvent& WXUNUSED(event))
 {
     sock->Close();
->>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 
 //update status
     UpdateStatusBar();
@@ -345,8 +318,8 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
 
 void Frame::UpdateStatusBar()
 {
-    fileMenu->Enable(CLIENT_OPEN, !sock->IsConnected());
-    fileMenu->Enable(CLIENT_CLOSE, sock->IsConnected());
+    file->Enable(CLIENT_OPEN, !sock->IsConnected());
+    file->Enable(CLIENT_CLOSE, sock->IsConnected());
     if (sock->IsConnected()) {
         //SetStatusText(wxString::Format(wxT("%s:%u"),
         //    addr.IPAddress(), addr.Service()), 1);

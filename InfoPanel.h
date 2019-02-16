@@ -42,7 +42,7 @@ private:
     int x_draw;
 
     int count_of_opponents;
-    std::map<std::string, int> my_opponents;
+    //std::map<std::string, int> my_opponents;
 };
 
 

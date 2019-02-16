@@ -4,13 +4,13 @@
 #include <wx/stattext.h>
 #include <chrono>
 
-<<<<<<< HEAD
-GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
-        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
-=======
+//<<<<<<< HEAD
+/*GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
+        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)*/
+//=======
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
-        : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
->>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
+        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 {
     sock = m_sock;
     timer = new wxTimer(this, 1);
