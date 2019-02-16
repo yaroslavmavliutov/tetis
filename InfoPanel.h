@@ -7,6 +7,7 @@
 #include <wx/wx.h>
 #include <wx/panel.h>
 #include <wx/statline.h>
+#include "wx/socket.h"
 
 
 const int clearcoord[13][2] = {

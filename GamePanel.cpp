@@ -4,9 +4,10 @@
 #include <wx/stattext.h>
 #include <chrono>
 
-GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
+GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
         : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
 {
+    sock = m_sock;
     timer = new wxTimer(this, 1);
     status_scr = fr->GetStatusBar();
     pieceDoneFalling = false;
@@ -224,6 +225,26 @@ void GamePanel::ClearFullLines()
     str.Printf(wxT("Your lvl: %d"), lvl);
     status_scr->SetStatusText(str);
 
+    //-----
+    wxString str1 = std::to_string(score);
+    wxCharBuffer buffer = str1.ToUTF8();
+    size_t txn = str1.length();
+
+    unsigned char len;
+    len = txn;
+    sock->Write(&len, 1);//send the length of the message first
+    if (sock->Write(buffer.data(), txn).LastCount() != txn)
+    {
+        //panel->m_up->txtRx->AppendText(wxT("Write error.\n"));
+        std::cout << "Write error.\n ";
+        //return;
+    }
+    else {
+        //panel->m_up->txtRx->AppendText("Tx: " + str + "\n");
+        std::cout << "Tx: " << str1 << "\n";
+    }
+    //------
+
     Frame *comm = (Frame *) panel->GetParent();
     comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
 
@@ -231,6 +252,8 @@ void GamePanel::ClearFullLines()
     current.SetShape(None);
     timer->Start(this->TIMER_INTERVAL);
     Refresh();
+
+
 }
 
 int GamePanel::CalculatorScore(int points, int n) {

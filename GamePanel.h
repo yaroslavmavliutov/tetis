@@ -6,6 +6,7 @@
 #include <wx/wx.h>
 #include <wx/panel.h>
 #include <wx/statline.h>
+#include "wx/socket.h"
 
 const wxColour colors[] =
         {
@@ -34,10 +35,11 @@ const wxColour dark[] =
 class GamePanel : public wxPanel
 {
 public:
-    GamePanel(wxPanel* parent_t, wxFrame *fr);
+    GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *sock);
     void Start();
     void Pause();
     PieceShape GetNextShape() const { return next.GetShape(); }
+
 
     /* wx event handlers */
 protected:
@@ -52,7 +54,7 @@ private:
         BoardWidth = 11,
         BoardHeight = 22
     };
-
+    wxSocketClient *sock;
     PieceShape& PieceAt(int x, int y) { return board[y * BoardWidth + x]; }
     int Width() { return GetClientSize().GetWidth() / BoardWidth; }
     int Height() { return GetClientSize().GetHeight() / BoardHeight; }
