@@ -6,9 +6,13 @@
 #include <wx/wx.h>
 #include <wx/panel.h>
 #include <wx/statline.h>
+<<<<<<< HEAD
 #include <cmath>
 
 //enum PieceShape { None, I_long, O_bloc, T, L, J, Z, S};
+=======
+#include "wx/socket.h"
+>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 
 const wxColour colors[] =
         {
@@ -40,21 +44,37 @@ const wxColour dark[] =
 class GamePanel : public wxPanel
 {
 public:
-    GamePanel(wxPanel* parent_t, wxFrame *fr);
+    GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *sock);
     void Start();
     void Pause();
     PieceShape GetNextShape() const { return next.GetShape(); }
 
+<<<<<<< HEAD
+=======
+
+    /* wx event handlers */
+>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 protected:
     void OnPaint(wxPaintEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnTimer(wxCommandEvent& event);
 
 private:
+<<<<<<< HEAD
 
     enum { BoardWidth = 10, BoardHeight = 22 };
     PieceShape& PieceCheck(int x, int y) { return board[y * BoardWidth + x]; }
 
+=======
+    /* Little hack to predefine the size */
+    enum
+    {
+        BoardWidth = 11,
+        BoardHeight = 22
+    };
+    wxSocketClient *sock;
+    PieceShape& PieceAt(int x, int y) { return board[y * BoardWidth + x]; }
+>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
     int Width() { return GetClientSize().GetWidth() / BoardWidth; }
     int Height() { return GetClientSize().GetHeight() / BoardHeight; }
     static bool CheckBounds(int x, int y) { return x >= 0 && x < BoardWidth && y >= 0 && y < BoardHeight; }
