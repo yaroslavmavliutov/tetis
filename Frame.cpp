@@ -9,27 +9,10 @@ using namespace sf;
 Frame::Frame(const wxString& title)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
 {
-//<<<<<<< HEAD
-    //MPI init
-    /*int rank, size;
-    int argc = 1;
-    //MPI_Init (&argc, NULL);      // starts MPI
-    MPI_Comm_rank (MPI_COMM_WORLD, &rank);        // get current process id
-    MPI_Comm_size (MPI_COMM_WORLD, &size);        // get number of processes
-    //MPI init
-    printf( "FRAME from process %d of %d\n", rank, size );*/
 
-    //if(rank == 0) // for 2 threads
-//    if (true)
-//    {
-//        m_parent = new wxPanel(this, wxID_ANY);
-//        menubar = new wxMenuBar; // menu
-//        file = new wxMenu; //menu
-//=======
     busy = false;
     menubar = new wxMenuBar; // menubar
     file = new wxMenu; //menu
-//>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
 
     file->Append(ID_PLAY, wxT("&Start play"));
     file->Append(ID_CREATE, wxT("&Create game"));
