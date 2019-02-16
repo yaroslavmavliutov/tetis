@@ -2,14 +2,14 @@
 #include "InfoPanel.h"
 #include "Frame.h"
 #include <wx/stattext.h>
-<<<<<<< HEAD
-#include <cmath>
-=======
+//<<<<<<< HEAD
+//#include <cmath>
+//=======
 #include <chrono>
->>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
+//>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
 
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
-        : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(175, 340), wxBORDER_SUNKEN)
+        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
 {
     timer = new wxTimer(this, 1);
     status_scr = fr->GetStatusBar();
@@ -43,17 +43,13 @@ void GamePanel::Start()
     paused = false;
     lvl = 1;
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
     //current.SetShape(PieceShape(rand()%7+1));
-=======
+//=======
 
     //current.SetRandomShape();
->>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
+//>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
     //RandomPiece();
-
-
-
-
 
     status_scr->SetStatusText(wxT("Your lvl: 1"));
     MakeNewPiece();
@@ -236,6 +232,7 @@ void GamePanel::RemoveFullLines()
 
     Frame *comm = (Frame *) panel->GetParent();
     comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
+    //comm->m_rp->DrawScore(score);
 
     pieceFallingFinished = true;
     current.SetShape(None);
@@ -273,6 +270,14 @@ void GamePanel::MakeNewPiece()
         timer->Stop();
         started = false;
         status_scr->SetStatusText(wxT("You Lose :("));
+
+        Frame *comm = (Frame *) panel->GetParent();
+        comm->file->Enable(ID_PLAY, true);
+        comm->file->Enable(ID_CREATE, true);
+        comm->file->Enable(ID_JOIN, true);
+        std::cout << "Do you want to be a server (s)";
+        comm->Setbusy(true);
+        //panel->Destroy();
     }
 }
 

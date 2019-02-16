@@ -8,6 +8,8 @@ class TetrisApp : public wxApp
 {
 public:
     virtual bool OnInit();
+
+    wxBoxSizer *frame_sizer;
 };
 
 #endif

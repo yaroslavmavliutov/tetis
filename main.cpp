@@ -7,7 +7,7 @@ IMPLEMENT_APP(TetrisApp);
 
 bool TetrisApp::OnInit()
 {
-<<<<<<< HEAD
+/*<<<<<<< HEAD
     int rank, size;
     int argc = 1;
     MPI_Init (&argc, NULL);      // starts MPI
@@ -51,10 +51,26 @@ bool TetrisApp::OnInit()
     }
     MPI_Finalize();
 
-=======
+=======*/
     Frame *server = new Frame(wxT("Tetris"));
+    server->ShowFullScreen(FALSE);
+    server->SetMinSize(wxSize(500, 380));
+    server->SetMaxSize(wxSize(500, 380));
+
     server->Show(true);
->>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
+
+    /*MyFrame *frame = new MyFrame( _("Hello World"), wxPoint(50, 50),
+                                  wxSize(450, 350));
+
+    frame->Connect( ID_Quit, wxEVT_COMMAND_MENU_SELECTED,
+                    (wxObjectEventFunction) &MyFrame::OnQuit );
+    frame->Connect( ID_About, wxEVT_COMMAND_MENU_SELECTED,
+                    (wxObjectEventFunction) &MyFrame::OnAbout );
+
+    frame->Show(true);
+    SetTopWindow(frame);*/
+
+//>>>>>>> 4334ef3886ac46ff8d03ea817f60801ffe69db14
 
     return true;
 }
