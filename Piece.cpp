@@ -12,38 +12,31 @@ void Piece::SetShape(PieceShape shape)
     pieceShape = shape;
 }
 
-void Piece::SetRandomShape()
-{
-    int rand_shape_idx = rand() % 7 + 1;
-    SetShape(PieceShape(rand_shape_idx));
-}
-
-
 int Piece::MaxX() const {
-    int element = coords[0][XCOORD];
-    for (int i = 0; i < 4; i++) element = max(element, coords[i][XCOORD]);
+    int element = coords[0][0];
+    for (int i = 0; i < 4; i++) element = max(element, coords[i][0]);
     return element;
 }
 
 int Piece::MaxY() const {
-    int element = coords[0][YCOORD];
-    for (int i = 0; i < 4; i++) element = max(element, coords[i][YCOORD]);
+    int element = coords[0][1];
+    for (int i = 0; i < 4; i++) element = max(element, coords[i][1]);
     return element;
 }
 int Piece::MinX() const {
-    int element = coords[0][XCOORD];
-    for (int i = 0; i < 4; i++) element = min(element, coords[i][XCOORD]);
+    int element = coords[0][0];
+    for (int i = 0; i < 4; i++) element = min(element, coords[i][0]);
     return element;
 }
 int Piece::MinY() const {
-    int element = coords[0][YCOORD];
-    for (int i = 0; i < 4; i++) element = min(element, coords[i][YCOORD]);
+    int element = coords[0][1];
+    for (int i = 0; i < 4; i++) element = min(element, coords[i][1]);
     return element;
 }
 
 
 Piece Piece::Rotation() const {
-    if (pieceShape == Square) return  *this;
+    if (pieceShape == O_bloc) return  *this;
     Piece result;
     result.pieceShape = pieceShape;
     for (int i = 0; i<4; i++) {

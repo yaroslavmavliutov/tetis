@@ -4,13 +4,18 @@
 #include <wx/stattext.h>
 #include <chrono>
 
+//<<<<<<< HEAD
+/*GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
+        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)*/
+//=======
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
-        : wxPanel(parent_t, -1, wxPoint(-1, -1), wxSize(180, 340), wxBORDER_SUNKEN)
+        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 {
     sock = m_sock;
     timer = new wxTimer(this, 1);
     status_scr = fr->GetStatusBar();
-    pieceDoneFalling = false;
+    pieceFallingFinished = false;
     started = false;
     paused = false;
     score = 0;
@@ -19,11 +24,11 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
     curY = 0;
     panel = parent_t;
     TIMER_INTERVAL = 500;
-    next.SetRandomShape();
-    //current.SetRandomShape();
+    next.SetShape(PieceShape(rand()%7+1));
+    //current.SetShape(PieceShape(rand()%7+1));
 
     //RandomPiece(); - цю треба тут, але з нею виходить переповнення
-    Clear();
+    ClearBoard();
 
     Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
     Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GamePanel::OnKeyDown));
@@ -36,16 +41,9 @@ void GamePanel::Start()
         return;
 
     started = true;
-    pieceDoneFalling = false;
+    pieceFallingFinished = false;
     paused = false;
     lvl = 1;
-
-
-    //current.SetRandomShape();
-    //RandomPiece();
-
-
-
 
 
     status_scr->SetStatusText(wxT("Your lvl: 1"));
@@ -87,7 +85,7 @@ void GamePanel::OnPaint(wxPaintEvent& event)
     for (int i = 0; i < BoardHeight; i++)
         for (int j = 0; j < BoardWidth; j++)
         {
-            PieceShape pieceShape = PieceAt(j, BoardHeight - i - 1);
+            PieceShape pieceShape = PieceCheck(j, BoardHeight - i - 1);
             if (pieceShape == None)
                 continue;
             DrawPieceSquare(dc, j * Width(), top + i * Height(), pieceShape);
@@ -125,18 +123,20 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
     switch (keyCode)
     {
         case WXK_SPACE:
-            DropCurrentToBottom();
+            DropDown();
             break;
         case WXK_UP:
             DoMove(current.Rotation(), curX, curY);
             break;
         case WXK_DOWN:
-            DropCurrentOneLine();
+            DropOneLine();
             break;
         case WXK_LEFT:
+            //if (!CheckBounds(curX, current))
             DoMove(current, curX - 1, curY);
             break;
         case WXK_RIGHT:
+            //if (!CheckBounds(curX, current))
             DoMove(current, curX + 1, curY);
             break;
         default:
@@ -146,50 +146,50 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
 
 void GamePanel::OnTimer(wxCommandEvent& event)
 {
-    if (pieceDoneFalling)
+    if (pieceFallingFinished)
     {
-        pieceDoneFalling = false;
+        pieceFallingFinished = false;
         MakeNewPiece();
     }
     else
-        DropCurrentOneLine();
+        DropOneLine();
 }
 
-void GamePanel::Clear()
+void GamePanel::ClearBoard()
 {
     for (int i = 0; i < BoardHeight * BoardWidth; i++)
         board[i] = None;
 }
 
-void GamePanel::DropCurrentToBottom()
+void GamePanel::DropDown()
 {
     int y = curY;
     while (y)
         if (!DoMove(current, curX, --y))
             break;
-    PieceHitBottom();
+    PieceDropped();
 }
 
-void GamePanel::DropCurrentOneLine()
+void GamePanel::DropOneLine()
 {
     if (!DoMove(current, curX, curY - 1))
-        PieceHitBottom();
+        PieceDropped();
 }
 
-void GamePanel::PieceHitBottom()
+void GamePanel::PieceDropped()
 {
     for (int i = 0; i < 4; i++)
     {
         int x = curX + current.x(i);
         int y = curY - current.y(i);
-        PieceAt(x, y) = current.GetShape();
+        PieceCheck(x, y) = current.GetShape();
     }
-    ClearFullLines();
-    if (!pieceDoneFalling)
+    RemoveFullLines();
+    if (!pieceFallingFinished)
         MakeNewPiece();
 }
 
-void GamePanel::ClearFullLines()
+void GamePanel::RemoveFullLines()
 {
     int lines = 0;
 
@@ -197,7 +197,7 @@ void GamePanel::ClearFullLines()
     {
         bool lineFull = true;
         for (int j = 0; j < BoardWidth; j++)
-            if (PieceAt(j, i) == None)
+            if (PieceCheck(j, i) == None)
             {
                 lineFull = false;
                 break;
@@ -209,7 +209,7 @@ void GamePanel::ClearFullLines()
         lines++;
         for (int j = i; j < BoardHeight - 1; j++)
             for (int k = 0; k < BoardWidth; k++)
-                PieceAt(k, j) = PieceAt(k, j + 1);
+                PieceCheck(k, j) = PieceCheck(k, j + 1);
     }
 
     if (!lines)
@@ -220,7 +220,7 @@ void GamePanel::ClearFullLines()
     else if (lines == 4) score+= CalculatorScore(1200, lvl);
 
     lvl = score/500 + 1;
-    this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*10;
+    this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*25;
     wxString str;
     str.Printf(wxT("Your lvl: %d"), lvl);
     status_scr->SetStatusText(str);
@@ -247,8 +247,9 @@ void GamePanel::ClearFullLines()
 
     Frame *comm = (Frame *) panel->GetParent();
     comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
+    //comm->m_rp->DrawScore(score);
 
-    pieceDoneFalling = true;
+    pieceFallingFinished = true;
     current.SetShape(None);
     timer->Start(this->TIMER_INTERVAL);
     Refresh();
@@ -263,7 +264,7 @@ int GamePanel::CalculatorScore(int points, int n) {
 void GamePanel::RandomPiece()
 {
     current.SetShape(next.GetShape());
-    next.SetRandomShape();
+    next.SetShape(PieceShape(rand()%7+1));
 
     Frame *comm = (Frame *) panel->GetParent();
 
@@ -276,7 +277,6 @@ void GamePanel::RandomPiece()
 
 void GamePanel::MakeNewPiece()
 {
-    //current.SetRandomShape();
     RandomPiece();
     curX = BoardWidth / 2;
     curY = BoardHeight - 1 + current.MinY();
@@ -287,17 +287,26 @@ void GamePanel::MakeNewPiece()
         timer->Stop();
         started = false;
         status_scr->SetStatusText(wxT("You Lose :("));
+
+        Frame *comm = (Frame *) panel->GetParent();
+        comm->file->Enable(ID_PLAY, true);
+        comm->file->Enable(ID_CREATE, true);
+        comm->file->Enable(ID_JOIN, true);
+        std::cout << "Do you want to be a server (s)";
+        comm->Setbusy(true);
+        //panel->Destroy();
     }
 }
 
 bool GamePanel::DoMove(const Piece& piece, int newX, int newY)
 {
+
     for (int i = 0; i < 4; i++)
     {
         int x = newX + piece.x(i);
         int y = newY - piece.y(i);
 
-        if (!InBounds(x, y) || PieceAt(x, y) != None)
+        if (!CheckBounds(x, y) || PieceCheck(x, y) != None)
             return false;
     }
 

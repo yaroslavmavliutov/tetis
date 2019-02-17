@@ -1,23 +1,19 @@
 #ifndef _PIECE_H
 #define _PIECE_H
 
-#define XCOORD 0
-#define YCOORD 1
-
-/* Define all the different shapes we can have */
-enum PieceShape { None, Z, S, Line, T, Square, L, BackwardsL };
-
+enum PieceShape { None, I_long, O_bloc, T, L, J, Z, S};
 
 const int pieceCoords[8][4][2] =
 {
-    { {0,  0},  {0, 0},  {0,  0}, {0,  0} },
-    { {0,  -1}, {0, 0},  {-1, 0}, {-1, 1} },
-    { {0,  -1}, {0, 0},  {1,  0}, {1,  1} },
-    { {0,  -1}, {0, 0},  {0,  1}, {0,  2} },
-    { {-1, 0},  {0, 0},  {1,  0}, {0,  1} },
-    { { 0, 0},  {1, 0},  {0,  1}, {1,  1} },
-    { {-1, -1}, {0, -1}, {0,  0}, {0,  1} },
-    { {1,  -1}, {0, -1}, {0,  0}, {0,  1} }
+    { {0,  0},  {0, 0},  {0,  0}, {0,  0} }, //none
+    { {0,  -1}, {0, 0},  {0,  1}, {0,  2} }, // I
+    { { 0, 0},  {-1, 0},  {0,  1}, {-1,  1} }, // square
+    { {-1, 0},  {0, 0},  {1,  0}, {0,  1} }, // T
+    { {-1, -1}, {0, -1}, {0,  0}, {0,  1} }, // L
+    { {0,  -1}, {-1, -1}, {-1,  0}, {-1,  1} }, // J
+    { {0,  -1}, {0, 0},  {-1, 0}, {-1, 1} }, // Z
+    { {-1,  -1}, {-1, 0},  {0,  0}, {0,  1} } // S
+
 };
 
 class Piece
@@ -26,24 +22,22 @@ public:
     Piece() { SetShape(None); }
 
     void SetShape(PieceShape shape);
-    void SetRandomShape();
 
     PieceShape GetShape() const { return pieceShape; }
 
-    int x(int i) const { return coords[i][XCOORD]; }
-    int y(int i) const { return coords[i][YCOORD]; }
+    int x(int i) const { return coords[i][0]; }
+    int y(int i) const { return coords[i][1]; }
     int MinX() const;
     int MaxX() const;
     int MinY() const;
     int MaxY() const;
 
-
     Piece Rotation() const;
 
 
 private:
-    void SetX(int idx, int val) { coords[idx][XCOORD] = val; }
-    void SetY(int idx, int val) { coords[idx][YCOORD] = val; }
+    void SetX(int idx, int val) { coords[idx][0] = val; }
+    void SetY(int idx, int val) { coords[idx][1] = val; }
     PieceShape pieceShape;
     int coords[4][2];
 };

@@ -22,7 +22,8 @@ public:
     InfoPanel(wxPanel *parent_t, wxFrame *fr);
     void ChangePeace();
     void ClearPeace();
-    void DrawScore(int score);
+    //void DrawScore(int score);
+    void DrawOpponents(std::string Name, int score);
     Piece piece;
     wxStaticText *string_score;
 
@@ -39,6 +40,9 @@ private:
     int Height;
     int y_draw;
     int x_draw;
+
+    int count_of_opponents;
+    //std::map<std::string, int> my_opponents;
 };
 
 

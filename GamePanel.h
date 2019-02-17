@@ -6,30 +6,39 @@
 #include <wx/wx.h>
 #include <wx/panel.h>
 #include <wx/statline.h>
+//<<<<<<< HEAD
+#include <cmath>
+
+//enum PieceShape { None, I_long, O_bloc, T, L, J, Z, S};
+//=======
 #include "wx/socket.h"
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 
 const wxColour colors[] =
         {
-                wxColour(211, 211, 211),       wxColour(204, 102, 102),
-                wxColour(102, 204, 102), wxColour(102, 102, 204),
-                wxColour(204, 204, 102), wxColour(204, 102, 204),
-                wxColour(102, 204, 204), wxColour(218, 170, 0)
+                wxColour(211, 211, 211), wxColour(102, 102, 204),
+                wxColour(218, 170, 0),   wxColour(204, 204, 102),
+                wxColour(204, 102, 204),  wxColour(138, 43, 226),
+                wxColour(102, 204, 102),   wxColour(204, 102, 102)
+
         };
 
 const wxColour light[] =
         {
-                wxColour(0, 0, 0),       wxColour(248, 159, 171),
-                wxColour(121, 252, 121), wxColour(121, 121, 252),
-                wxColour(252, 252, 121), wxColour(252, 121, 252),
-                wxColour(121, 252, 252), wxColour(252, 198, 0)
+                wxColour(0, 0, 0),       wxColour(121, 121, 252),
+                wxColour(252, 198, 0), wxColour(252, 252, 121),
+                wxColour(252, 121, 252), wxColour(147, 112, 219),
+                wxColour(121, 252, 121), wxColour(248, 159, 171)
+
         };
 
 const wxColour dark[] =
         {
-                wxColour(0, 0, 0),      wxColour(128, 59, 59),
-                wxColour(59, 128, 59),  wxColour(59, 59, 128),
-                wxColour(128, 128, 59), wxColour(128, 59, 128),
-                wxColour(59, 128, 128), wxColour(128, 98, 0)
+                wxColour(0, 0, 0),      wxColour(59, 59, 128),
+                wxColour(128, 98, 0), wxColour(128, 128, 59),
+                wxColour(128, 59, 128), wxColour(75, 0, 130),
+                wxColour(59, 128, 59),  wxColour(128, 59, 59)
+
         };
 
 class GamePanel : public wxPanel
@@ -40,30 +49,42 @@ public:
     void Pause();
     PieceShape GetNextShape() const { return next.GetShape(); }
 
+//<<<<<<< HEAD
+//=======
 
     /* wx event handlers */
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 protected:
     void OnPaint(wxPaintEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnTimer(wxCommandEvent& event);
 
 private:
+//<<<<<<< HEAD
+
+    enum { BoardWidth = 10, BoardHeight = 22 };
+    PieceShape& PieceCheck(int x, int y) { return board[y * BoardWidth + x]; }
+
+//=======
     /* Little hack to predefine the size */
-    enum
+    /*enum
     {
         BoardWidth = 11,
         BoardHeight = 22
-    };
+    };*/
     wxSocketClient *sock;
-    PieceShape& PieceAt(int x, int y) { return board[y * BoardWidth + x]; }
+    //PieceShape& PieceAt(int x, int y) { return board[y * BoardWidth + x]; }
+//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
     int Width() { return GetClientSize().GetWidth() / BoardWidth; }
     int Height() { return GetClientSize().GetHeight() / BoardHeight; }
-    static bool InBounds(int x, int y) { return x >= 0 && x < BoardWidth && y >= 0 && y < BoardHeight; }
-    void Clear();
-    void DropCurrentToBottom();
-    void DropCurrentOneLine();
-    void PieceHitBottom();
-    void ClearFullLines();
+    static bool CheckBounds(int x, int y) { return x >= 0 && x < BoardWidth && y >= 0 && y < BoardHeight; }
+
+
+    void ClearBoard();
+    void DropDown();
+    void DropOneLine();
+    void PieceDropped();
+    void RemoveFullLines();
     void MakeNewPiece();
     void RandomPiece();
     bool DoMove(const Piece& piece, int newX, int newY);
@@ -72,16 +93,16 @@ private:
 
     wxTimer* timer;
     wxStatusBar* status_scr;
+    wxPanel *panel;
     bool started;
     bool paused;
-    bool pieceDoneFalling;
+    bool pieceFallingFinished;
     Piece current;
     Piece next;
     int curX;
     int curY;
     int score;
     int lvl;
-    wxPanel *panel;
     int TIMER_INTERVAL;
     PieceShape board[BoardWidth * BoardHeight];
 };

@@ -11,6 +11,7 @@ g++ `wx-config --cppflags` main.cpp Piece.cpp TetrisGame.cpp `wx-config --libs`
 АБО
 
 g++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp  MyThread.cpp `wx-config --libs` -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
+g++ -std=c++11 -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp  MyThread.cpp `wx-config --libs` -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o MyThread.o `wx-config --libs` -lsfml-graphics -lsfml-window -lsfml-system -lsfml-network
 
 

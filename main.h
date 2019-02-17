@@ -19,6 +19,8 @@ class TetrisApp : public wxApp
 {
 public:
     virtual bool OnInit();
+
+    wxBoxSizer *frame_sizer;
 };
 
 wxBEGIN_EVENT_TABLE(Frame, wxFrame)
