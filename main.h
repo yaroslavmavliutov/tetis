@@ -29,6 +29,8 @@ EVT_MENU(Minimal_About, Frame::OnAbout)
 EVT_SOCKET(SOCKET_ID, Frame::OnSocketEvent)
 EVT_MENU(CLIENT_OPEN, Frame::OnOpenConnection)
 EVT_MENU(CLIENT_CLOSE, Frame::OnCloseConnection)
+EVT_SOCKET(SERVER_SOCKET_ID, Frame::ServerOnSocketEvent)
+EVT_SOCKET(SERVER_ID, Frame::ServerOnServerEvent)
 wxEND_EVENT_TABLE()
 
 #endif

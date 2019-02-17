@@ -290,8 +290,6 @@ void GamePanel::MakeNewPiece()
 
         Frame *comm = (Frame *) panel->GetParent();
         comm->file->Enable(ID_PLAY, true);
-        comm->file->Enable(ID_CREATE, true);
-        comm->file->Enable(ID_JOIN, true);
         std::cout << "Do you want to be a server (s)";
         comm->Setbusy(true);
         //panel->Destroy();
