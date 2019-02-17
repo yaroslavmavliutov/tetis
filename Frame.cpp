@@ -1,22 +1,10 @@
-
-//#include "Frame.h"
-//
-//// frame constructor
-//Frame::Frame(const wxString& title)
-//        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(1000, 650)
-//        ,wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
 #include "Frame.h"
-#include "GamePanel.h"
-#include "InfoPanel.h"
-#include "Piece.h"
 
 using namespace std;
-using namespace sf;
 
 Frame::Frame(const wxString& title)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
 {
-//<<<<<<< HEAD
 
     busy = false;
     menubar = new wxMenuBar; // menubar
@@ -24,70 +12,27 @@ Frame::Frame(const wxString& title)
     file = new wxMenu; //menu
 
     file->Append(ID_PLAY, wxT("&Start play"));
-    file->Append(ID_CREATE, wxT("&Create game"));
-    file->Append(ID_JOIN, wxT("&Join game"));
     file->Append(ID_HELP, wxT("&Help"));
     file->Append(wxID_EXIT, wxT("&Quit\tCtrl+W"));
-
-
     file->Append(CLIENT_OPEN, "&Open session\tAlt-O","Connect to server");
     file->Append(CLIENT_CLOSE,"&Close session\tAlt-C","Close connection");
     file->Append(Minimal_Quit, "E&xit\tAlt-X", "Quit this program");
-
     file->AppendSeparator();
 
     // Quit
     Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(Frame::OnQuit));
-
     //Help
     Connect(ID_HELP, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(Frame::OnHelp));
-
-    // Create game
-    Connect(ID_CREATE, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(Frame::OnCreate));
-
-    // Join game
-    Connect(ID_JOIN, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(Frame::OnJoin));
-
     // Start play
     Connect(ID_PLAY, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(Frame::OnPlay));
 
-//=======
-    // set the frame icon
-
-
-#if wxUSE_MENUS
-    // create a menu bar
-	//fileMenu = new wxMenu;
-
-	// the "About" item should be in the help menu
-	//helpMenu = new wxMenu;
-	//helpMenu->Append(Minimal_About, "&About\tF1", "Show about dialog");
-
-	// now append the freshly created menu to the menu bar...
-	//wxMenuBar *menuBar = new wxMenuBar();
-	//menuBar->Append(fileMenu, "&File");
-	//menuBar->Append(helpMenu, "&Help");
-
-	// ... and attach this menu bar to the frame
-	//SetMenuBar(menuBar);
 	Center();
 
     menubar->Append(file, wxT("&File"));
     SetMenuBar(menubar);
-#endif // wxUSE_MENUS
-
-#if wxUSE_STATUSBAR
-    // create a status bar just for fun (by default with 1 pane only)
-	CreateStatusBar(2);
-	SetStatusText("TCP client using wxWidgets");
-
-#endif // wxUSE_STATUSBAR
-
 
     sock = new wxSocketClient();
 
@@ -97,23 +42,10 @@ Frame::Frame(const wxString& title)
                     wxSOCKET_INPUT_FLAG |
                     wxSOCKET_LOST_FLAG);
     sock->Notify(true);
-
-    /*m_parent = new wxPanel(this, wxID_ANY);
-    wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
-
-    GamePanel *m_lp = new GamePanel(m_parent, this, sock);
-    m_rp = new InfoPanel(m_parent, this);*/
-//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
-
     m_text  = new wxTextCtrl(this, -1,
                              _("Welcome to wxSocket demo: Client\nClient ready\n"),
                              wxDefaultPosition, wxDefaultSize,
                              wxTE_MULTILINE | wxTE_READONLY);
-
-
-
-
-//<<<<<<< HEAD
 }
 
 void Frame::Setbusy(bool meaning) {
@@ -127,10 +59,6 @@ Frame::~Frame()
     delete sock;
 }
 
-// event handlers
-//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
-
-
 
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
@@ -138,7 +66,7 @@ void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
     Close(true);
 }
 
-//<<<<<<< HEAD
+
 void Frame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
     Refresh();
 
@@ -149,57 +77,44 @@ void Frame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 
 void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     file->Enable(ID_PLAY, false);
-    file->Enable(ID_CREATE, false);
-    file->Enable(ID_JOIN, false);
 
     if (this->busy) {
 
         m_lp->Destroy();
         m_rp->Destroy();
-        //m_parent->Destroy();
-        //hbox = nullptr;
-        //hbox->Clear(TRUE);
+
     } else {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
-        statusScore = CreateStatusBar();
+        statusScore = CreateStatusBar(2);
     }
-
 
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
-//    wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
     hbox = new wxBoxSizer(wxHORIZONTAL);
 
-    //GamePanel *m_lp = new GamePanel(m_parent, this);
-    m_lp = new GamePanel(m_parent, this);
-
+    m_lp = new GamePanel(m_parent, this, sock);
     /*std::map<std::string, int> my_map = {
             { "A", 1 },
             { "B", 2 },
             { "C", 3 }
     };*/
     m_rp = new InfoPanel(m_parent, this);
-    //m_rp = new InfoPanel(m_parent, this, my_map);
-
+    //Start tetris
     m_lp->SetFocus();
     m_lp->Start();
 
     srand(time(NULL));
 
     hbox->Add(m_lp, 0, wxEXPAND | wxALL, 5);
-
-    //hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
-
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
 
     m_parent->SetSizer(hbox);
 
     this->Centre();
 }
-//=======
 
-/*void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
+void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox(wxString::Format
                          (
@@ -211,11 +126,7 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
                  "About wxWidgets TCP client sample",
                  wxOK | wxICON_INFORMATION,
                  this);
-}*/
-
-
-
-
+}
 
 
 void Frame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
@@ -253,9 +164,7 @@ void Frame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
 void Frame::OnCloseConnection(wxCommandEvent& WXUNUSED(event))
 {
     sock->Close();
-//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
-
-//update status
+    //update status
     UpdateStatusBar();
 }
 
@@ -321,8 +230,6 @@ void Frame::UpdateStatusBar()
     file->Enable(CLIENT_OPEN, !sock->IsConnected());
     file->Enable(CLIENT_CLOSE, sock->IsConnected());
     if (sock->IsConnected()) {
-        //SetStatusText(wxString::Format(wxT("%s:%u"),
-        //    addr.IPAddress(), addr.Service()), 1);
         SetStatusText(wxString::Format(wxT("Connected")), 1);
     }
     else {

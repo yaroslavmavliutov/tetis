@@ -1,12 +1,8 @@
 #include "InfoPanel.h"
-#include <wx/stattext.h>
-
 
 InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr)
-//InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, std::map<std::string, int> opponents)
         :wxPanel(parent_t, wxID_ANY, wxPoint(190, 5), wxSize(305, 345), wxBORDER_SUNKEN)
 {
-    //my_opponents = opponents;
     panel = parent_t;
     Width = 23;
     Height = 23;
@@ -59,10 +55,6 @@ void InfoPanel::ClearPeace() {
     }
 }
 
-//void InfoPanel::DrawScore(int score) {
-//    this->string_score->Destroy();
-//    this->string_score = new wxStaticText(this, -1, wxString::Format(wxT("Your Score: %d"), score), wxPoint(110, 190));
-//}
 
 void InfoPanel::DrawOpponents(std::string Name, int score) {
 
