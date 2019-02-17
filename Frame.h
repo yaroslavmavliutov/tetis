@@ -9,7 +9,7 @@
 
 
 
-
+#define __GXX_ABI_VERSION 1010
 typedef wxIPV4address IPaddress;
 
 // Define a new frame type: this is going to be our main frame
@@ -26,7 +26,6 @@ public:
     // event handlers for Socket menu
     void OnOpenConnection(wxCommandEvent& event);
     void OnCloseConnection(wxCommandEvent& event);
-    //void OnSend(wxCommandEvent& event);
     void OnSocketEvent(wxSocketEvent& event);
 
     // convenience functions
@@ -34,12 +33,9 @@ public:
 //-----------------------------------------------------------------------------------------
     GamePanel *m_lp;
     InfoPanel *m_rp;
-
     wxPanel *m_parent;
 
-//<<<<<<< HEAD
     wxStatusBar *statusScore;
-    //void OnQuit(wxCommandEvent & event);
     void OnHelp(wxCommandEvent & event);
     void OnCreate(wxCommandEvent & event);
     void OnJoin(wxCommandEvent & event);
@@ -52,13 +48,11 @@ public:
     wxTextCtrl *m_text;
     wxMenuBar *menubar; // new
     wxMenu *file; // File + vkladki
-    //wxMenuItem *quit;
+
 
     wxSocketClient *sock;
 
 private:
-
-    //wxMenu *fileMenu;
     wxMenu *helpMenu;
     // any class wishing to process wxWidgets events must use this macro
     wxDECLARE_EVENT_TABLE();
@@ -81,6 +75,5 @@ enum
     Minimal_About = wxID_ABOUT
 };
 
-//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 
 #endif
