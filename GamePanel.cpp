@@ -13,7 +13,7 @@
 //=======
 //>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
-        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
+        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
 {
     sock = m_sock;
     timer = new wxTimer(this, 1);
