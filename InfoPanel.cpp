@@ -1,7 +1,7 @@
 #include "InfoPanel.h"
+#include "Frame.h"
 
-
-InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr)
+InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, int nb_opponent)
         :wxPanel(parent_t, wxID_ANY, wxPoint(190, 5), wxSize(305, 310), wxBORDER_SUNKEN)
 {
     panel = parent_t;
@@ -13,7 +13,13 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr)
     sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 40), wxSize(305,1));
     sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 170), wxSize(305,1));
 
-    string_score = new wxStaticText(this, -1, wxT("Score: 0"), wxPoint(110, 190));
+//    *strings_score = new wxStaticText[nb_opponent+1];
+    Frame *comm = (Frame *) panel->GetParent();
+
+    for (int i = 0 ; i < nb_opponent+1; i++){
+        strings_score[i] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), comm->UserName), wxPoint(110, (190 + i*10)));
+    }
+
 
 }
 
@@ -57,8 +63,8 @@ void InfoPanel::ClearPeace() {
 }
 
 
-void InfoPanel::DrawOpponents(std::string Name, int score) {
-
-    this->string_score = new wxStaticText(this, -1, wxString::Format(wxT("Your Score: %d"), score), wxPoint(110, 190));
-}
+//void InfoPanel::DrawOpponents(std::string Name, int score) {
+//
+//    this->string_score = new wxStaticText(this, -1, wxString::Format(wxT("Your Score: %d"), score), wxPoint(110, 190));
+//}
 

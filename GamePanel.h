@@ -39,11 +39,11 @@ const wxColour dark[] =
 class GamePanel : public wxPanel
 {
 public:
-    GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *sock);
+    GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *sock, int nb_opponent);
     void Start();
     void Pause();
     PieceShape GetNextShape() const { return next.GetShape(); }
-
+    int nb_opponent;
     /* wx event handlers */
 
 protected:

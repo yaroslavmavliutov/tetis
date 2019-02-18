@@ -12,7 +12,7 @@
 //=======
 //=======
 //>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
-GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
+GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
 {
     sock = m_sock;
@@ -28,6 +28,7 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
     panel = parent_t;
     TIMER_INTERVAL = 500;
     next.SetShape(PieceShape(rand()%7+1));
+    nb_opponent = m_nb_opponent;
     //current.SetShape(PieceShape(rand()%7+1));
 
     //RandomPiece(); - цю треба тут, але з нею виходить переповнення
@@ -228,38 +229,25 @@ void GamePanel::RemoveFullLines()
     str.Printf(wxT("Your lvl: %d"), lvl);
     status_scr->SetStatusText(str);
 
-    //-----
-//    MSG my_mes;
-//    my_mes.id = 0;
-//    my_mes.login = "Nazar";
-//    my_mes.members = 1;
-//    my_mes.score = score;
+    Frame *comm = (Frame *) panel->GetParent();
+    comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s score: %d"), comm->UserName ,score));
 
-    wxString str1 = std::to_string(score);
-    wxCharBuffer buffer = str1.ToUTF8();
-    size_t txn = str1.length();
-//    size_t txn = sizeof(my_mes);
-//    std::cout << "txn __________________________________ " << txn << std::endl;
-    unsigned char len;
-    len = txn;
-//    std::cout << "len __________________________________ " << len << std::endl;
-    sock->Write(&len, 1);//send the length of the message first
-    if (sock->Write(buffer.data(), txn).LastCount() != txn)
-    //if (sock->WriteMsg(&my_mes, (wxUint32) txn).LastCount() != txn)
-    {
-        //panel->m_up->txtRx->AppendText(wxT("Write error.\n"));
-        std::cout << "Write error.\n ";
-        //return;z
-    }
-    else {
-        //panel->m_up->txtRx->AppendText("Tx: " + str + "\n");
-        std::cout << "Client send:  " << str1 << "\n";
-    }
-    //------
+     if(nb_opponent > 0){
+        wxString str1 = std::to_string(score);
+        wxCharBuffer buffer = str1.ToUTF8();
+        size_t txn = str1.length();
+        unsigned char len;
+        len = txn;
+        sock->Write(&len, 1);//send the length of the message first
 
-//    Frame *comm = (Frame *) panel->GetParent();
-//    comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
-    //comm->m_rp->DrawScore(score);
+        if (sock->Write(buffer.data(), txn).LastCount() != txn)
+        {
+            std::cout << "Write error.\n ";
+        }
+        else {
+            std::cout << "Client send:  " << str1 << "\n";
+        }
+    }
 
     pieceFallingFinished = true;
     current.SetShape(None);

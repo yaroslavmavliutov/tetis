@@ -203,27 +203,23 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
         statusScore = CreateStatusBar(3);
-        ServerSocket();
-        ClientSocket();
-        OpenConnection();
+//        ServerSocket();
+//        ClientSocket();
+//        OpenConnection();
     }
 
 
-
-
-
-
-    statusScore->SetStatusText(wxT("YYour lvl: 1"));
+    statusScore->SetStatusText(wxT("Your lvl: 1"));
 
     hbox = new wxBoxSizer(wxHORIZONTAL);
 
-    m_lp = new GamePanel(m_parent, this, sock);
+    m_lp = new GamePanel(m_parent, this, sock, 0); // 0 - opponents
     /*std::map<std::string, int> my_map = {
             { "A", 1 },
             { "B", 2 },
             { "C", 3 }
     };*/
-    m_rp = new InfoPanel(m_parent, this);
+    m_rp = new InfoPanel(m_parent, this, 0); // 0 - opponents
     //Start tetris
     m_lp->SetFocus();
     m_lp->Start();
@@ -298,7 +294,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             }
 //            std::cout << "AA";
             score = std::stoi( buf );
-            m_rp->string_score->SetLabel(wxString::Format(wxT("Server Score: %d"), score));
+            m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Server Score: %d"), score));
 
             //std::cout<< "Rx: " <<  wxString::FromUTF8(buf, len) << std::endl;
             // Enable input events again.
@@ -439,8 +435,8 @@ void Frame::ServerOnSocketEvent(wxSocketEvent& event){
             for(auto it = clients.begin(); it != clients.end(); ++it){
                 sockBase_curr_2 = *it;
 // НЕ треба відправляти самому собі дані
-//                if(sockBase_curr_2 == sockBase_curr)
-//                    continue;
+                if(sockBase_curr_2 == sockBase_curr)
+                    continue;
                 sockBase_curr_2->Write(&len,1);
                 sockBase_curr_2->Write(&buf, len);
                 std::cout << "Tx:  " << buf << "\n";
