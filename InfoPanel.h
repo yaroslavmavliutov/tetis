@@ -19,13 +19,14 @@ const int clearcoord[13][2] = {
 
 class InfoPanel : public wxPanel {
 public:
-    InfoPanel(wxPanel *parent_t, wxFrame *fr);
+    InfoPanel(wxPanel *parent_t, wxFrame *fr, int nb_opponent);
     void ChangePeace();
     void ClearPeace();
     //void DrawScore(int score);
     void DrawOpponents(std::string Name, int score);
     Piece piece;
-    wxStaticText *string_score;
+
+    wxStaticText *strings_score[5];
 
 
 private:
