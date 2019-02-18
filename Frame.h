@@ -5,9 +5,10 @@
 #include "InfoPanel.h"
 #include <wx/wxprec.h>
 #include "wx/wx.h"
+
 #include "wx/socket.h"
 #include <list>
-
+#include <string>
 
 
 //#define __GXX_ABI_VERSION 1010
@@ -28,15 +29,19 @@ public:
     void OnAbout(wxCommandEvent& event);
 
     // event handlers for Socket menu _ CLIENT
-    void OnOpenConnection(wxCommandEvent& event);
-    void OnCloseConnection(wxCommandEvent& event);
+    void OpenConnection();
+    void CloseConnection();
     void OnSocketEvent(wxSocketEvent& event);
+    void ClientSocket();
+    void ServerSocket();
+
+
    // ________CLIENT________________
 
    // SERVER
     void ServerOnServerEvent(wxSocketEvent& event);
     void ServerOnSocketEvent(wxSocketEvent& event);
-    void OnServer(wxCommandEvent& event);
+
     std::list<wxSocketBase *> clients;
     wxSocketServer *SERVER_sock;
     int numClients;
@@ -57,6 +62,8 @@ public:
 
     void Setbusy(bool);
 
+    IPaddress IP_addr;
+    int clients_in_game;
     bool busy;
     wxBoxSizer *hbox;
     wxTextCtrl *m_text;
@@ -75,7 +82,8 @@ private:
 const int ID_HELP = 110;
 const int ID_CREATE = 111;
 const int ID_JOIN = 112;
-const int ID_OPEN_CONNECTION_SERVER = 115;
+const int ID_CREATE_GAME = 115;
+const int ID_JOIN_GAME = 118;
 const int ID_PLAY = 113;
 
 // IDs for the controls and the menu commands
@@ -92,6 +100,7 @@ enum
     Minimal_Quit = wxID_EXIT,
     Minimal_About = wxID_ABOUT
 };
+
 
 
 #endif

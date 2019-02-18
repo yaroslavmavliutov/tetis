@@ -12,18 +12,14 @@ Frame::Frame(const wxString& title)
 
     file = new wxMenu; //menu
 
-    file->Append(ID_PLAY, wxT("&Start play"));
-    file->Append(ID_OPEN_CONNECTION_SERVER, wxT("&Server"));
+    file->Append(ID_PLAY, wxT("&Play alone"));
+    file->Append(ID_CREATE_GAME, wxT("&Create Game"));
+    file->Append(ID_JOIN_GAME, "&Join Game\tAlt-O","Join game");
     file->Append(ID_HELP, wxT("&Help"));
-    file->Append(wxID_EXIT, wxT("&Quit\tCtrl+W"));
-    file->Append(CLIENT_OPEN, "&Open session\tAlt-O","Connect to server");
-    file->Append(CLIENT_CLOSE,"&Close session\tAlt-C","Close connection");
     file->Append(Minimal_Quit, "E&xit\tAlt-X", "Quit this program");
     file->AppendSeparator();
 
-    // Quit
-    Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(Frame::OnQuit));
+
     //Help
     Connect(ID_HELP, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(Frame::OnHelp));
@@ -31,16 +27,13 @@ Frame::Frame(const wxString& title)
     Connect(ID_PLAY, wxEVT_COMMAND_MENU_SELECTED,
             wxCommandEventHandler(Frame::OnPlay));
 
-    // Server but
-    Connect(ID_OPEN_CONNECTION_SERVER, wxEVT_COMMAND_MENU_SELECTED,
-            wxCommandEventHandler(Frame::OnServer));
-
 
     Center();
 
     menubar->Append(file, wxT("&File"));
     SetMenuBar(menubar);
 
+<<<<<<< HEAD
     sock = new wxSocketClient();
 
     // Setup the event handler and subscribe to most events
@@ -63,6 +56,9 @@ Frame::Frame(const wxString& title)
         Close(true);
     }
 
+=======
+    //statusScore = CreateStatusBar(3);
+>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
     m_text  = new wxTextCtrl(this, -1,
                              wxString::Format(wxT("Your Score: %s"), UserName),
                              wxDefaultPosition, wxDefaultSize,
@@ -79,8 +75,8 @@ Frame::~Frame()
 {
     // No delayed deletion here, as the frame is dying anyway
     delete sock;
+    delete SERVER_sock;
 }
-
 
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
@@ -97,8 +93,106 @@ void Frame::OnHelp(wxCommandEvent& WXUNUSED(event)) {
                   wxOK|wxICON_INFORMATION, this );
 }
 
+
+void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
+{
+    wxMessageBox(wxString::Format
+                         (
+                                 "wxWidgets TCP client sample\n"
+                                 "\n"
+                                 "Author: Yan Naing Aye \n"
+                                 "Web: http://cool-emerald.blogspot.com"
+                         ),
+                 "About wxWidgets TCP client sample",
+                 wxOK | wxICON_INFORMATION,
+                 this);
+}
+
+
+
+// відкриття клієнтського сокету
+void Frame:: ClientSocket(){
+
+    sock = new wxSocketClient();
+
+    // Setup the event handler and subscribe to most events
+    sock->SetEventHandler( *this, SOCKET_ID);
+    sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
+                    wxSOCKET_INPUT_FLAG |
+                    wxSOCKET_LOST_FLAG);
+    sock->Notify(true);
+}
+
+// відкриття сокету сервера
+void Frame::ServerSocket()
+{
+    IPaddress addr;
+    addr.AnyAddress();
+    addr.Service(3000);
+    std::cout << "Creating server at " << addr.IPAddress() << ": " <<  addr.Service() << std::endl;
+
+    // Create the socket
+    SERVER_sock = new wxSocketServer(addr);
+
+    // We use IsOk() here to see if the server is really listening
+    if (!SERVER_sock->IsOk()){
+        std::cout << "Could not listen at the specified port !"<< std::endl;
+    }
+
+    IPaddress addrReal;
+    if (!SERVER_sock->GetLocal(addrReal)){
+        std::cout << "ERROR: couldn't get the address we bound to. " << std::endl;
+    }
+    else{
+        std::cout << "Server listening at" << addrReal.IPAddress() << " : " <<  addrReal.Service() << std::endl;
+    }
+
+    // Setup the event handler and subscribe to connection events
+    SERVER_sock->SetEventHandler( *this, SERVER_ID);
+    SERVER_sock->SetNotify(wxSOCKET_CONNECTION_FLAG);
+    SERVER_sock->Notify(true);
+    numClients = 0;
+    clients_in_game = 0;
+}
+
+// Встановлення з'єднання з сервером
+void Frame::OpenConnection()
+{
+    // Create the address - defaults to localhost:0 initially
+    IPaddress addr;
+
+    // Ask user for server address
+    wxString hostname = wxGetTextFromUser(
+            _("Enter the address of the wxSocket demo server:"),
+            _("Connect ..."),
+            _("localhost"));
+    if ( hostname.empty() )
+        return;
+
+    addr.Hostname(hostname);
+    addr.Service(3000);
+    std::cout<<"Trying to connect to " << addr.IPAddress() << " : " << addr.Service() << std::endl;
+
+//    file->Enable(CLIENT_OPEN, false);
+//    file->Enable(CLIENT_CLOSE, false);
+    // we connect asynchronously and will get a wxSOCKET_CONNECTION event when
+    // the connection is really established
+    //
+    // if you want to make sure that connection is established right here you
+    // could call WaitOnConnect(timeout) instead
+
+    sock->Connect(addr, false);
+
+    //update status
+    UpdateStatusBar();
+}
+
+
 void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
+
     file->Enable(ID_PLAY, false);
+    file->Enable(ID_CREATE_GAME, false);
+    file->Enable(ID_JOIN_GAME, false);
 
     if (this->busy) {
 
@@ -108,10 +202,16 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     } else {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
-        statusScore = CreateStatusBar(2);
+        statusScore = CreateStatusBar(3);
     }
 
-    statusScore->SetStatusText(wxT("Your lvl: 1"));
+    ServerSocket();
+    ClientSocket();
+    OpenConnection();
+
+
+
+    statusScore->SetStatusText(wxT("YYour lvl: 1"));
 
     hbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -136,65 +236,19 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     this->Centre();
 }
 
-void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
-{
-    wxMessageBox(wxString::Format
-                         (
-                                 "wxWidgets TCP client sample\n"
-                                 "\n"
-                                 "Author: Yan Naing Aye \n"
-                                 "Web: http://cool-emerald.blogspot.com"
-                         ),
-                 "About wxWidgets TCP client sample",
-                 wxOK | wxICON_INFORMATION,
-                 this);
-}
-
-
-void Frame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
-{
-    // Create the address - defaults to localhost:0 initially
-    IPaddress addr;
-    //addr.AnyAddress();
-
-    // Ask user for server address
-    wxString hostname = wxGetTextFromUser(
-            _("Enter the address of the wxSocket demo server:"),
-            _("Connect ..."),
-            _("localhost"));
-    if ( hostname.empty() )
-        return;
-
-    addr.Hostname(hostname);
-    addr.Service(3000);
-    std::cout<<"Trying to connect to " << addr.IPAddress() << " : " << addr.Service() << std::endl;
-
-    file->Enable(CLIENT_OPEN, false);
-    file->Enable(CLIENT_CLOSE, false);
-    // we connect asynchronously and will get a wxSOCKET_CONNECTION event when
-    // the connection is really established
-    //
-    // if you want to make sure that connection is established right here you
-    // could call WaitOnConnect(timeout) instead
-
-    sock->Connect(addr, false);
-
-    //update status
-    UpdateStatusBar();
-}
-
-void Frame::OnCloseConnection(wxCommandEvent& WXUNUSED(event))
+void Frame::CloseConnection()
 {
     sock->Close();
     //update status
     UpdateStatusBar();
 }
 
+// обробка отриманого повідомлення від сервера, або підключає, або читає, або закриває
 void Frame::OnSocketEvent(wxSocketEvent& event)
 {
-    std::cout<<"OnSocketEvent: " << std::endl;
+    std::cout<<"OnSocketEvent:CLIENT " << std::endl;
     wxSocketBase *sockBase = event.GetSocket();
-
+    int score;
     // First, print a message
     switch (event.GetSocketEvent())
     {
@@ -222,25 +276,32 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             sockBase->SetFlags(wxSOCKET_WAITALL);
 
             // Read the size @ first byte
-            unsigned char len;
+           unsigned char len;
+//            size_t len;
             sockBase->Read(&len, 1);
+//            MSG recv_msg;
             char buf[256];
             // Read the message
-            wxUint32 lenRd = sockBase->Read(buf, len).LastCount();
+            wxUint32 lenRd = sockBase->Read(&buf, len).LastCount();
             if (!lenRd) {
                 std::cout<< "Failed to read message." << std::endl;
                 return;
             }
             else {
-                std::cout<< "Read " <<lenRd <<" bytes."  << std::endl;
+                std::cout<< "Read CLIENT" <<lenRd <<" bytes."  << std::endl;
             }
+//            std::cout << "AA";
+            score = std::stoi( buf );
+            m_rp->string_score->SetLabel(wxString::Format(wxT("Server Score: %d"), score));
 
-            std::cout<< "Rx: " <<  wxString::FromUTF8(buf, len) << std::endl;
+            //std::cout<< "Rx: " <<  wxString::FromUTF8(buf, len) << std::endl;
             // Enable input events again.
             sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
             break;
         }
-        default:;
+        default: {
+            std::cout<<"default" << std::endl;
+        }
     }
 
     //update status
@@ -249,47 +310,20 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
 
 void Frame::UpdateStatusBar()
 {
-    file->Enable(CLIENT_OPEN, !sock->IsConnected());
-    file->Enable(CLIENT_CLOSE, sock->IsConnected());
+//    file->Enable(CLIENT_OPEN, !sock->IsConnected());
+//    file->Enable(CLIENT_CLOSE, sock->IsConnected());
     if (sock->IsConnected()) {
-        SetStatusText(wxString::Format(wxT("Connected")), 1);
+        SetStatusText(wxString::Format(wxT("Connected")), 2);
     }
     else {
-        SetStatusText(wxString::Format(wxT("Not connected")), 1);
+        SetStatusText(wxString::Format(wxT("Not connected")), 2);
     }
 }
 
 //_______________________SERVER__________________________________
-void Frame::OnServer(wxCommandEvent& WXUNUSED(event))
-{
-    IPaddress addr;
-    addr.AnyAddress();
-    addr.Service(3000);
-    std::cout << "Creating server at " << addr.IPAddress() << ": " <<  addr.Service() << std::endl;
 
-    // Create the socket
-    SERVER_sock = new wxSocketServer(addr);
 
-// We use IsOk() here to see if the server is really listening
-    if (!SERVER_sock->IsOk()){
-        std::cout << "Could not listen at the specified port !"<< std::endl;
-    }
-
-    IPaddress addrReal;
-    if (!SERVER_sock->GetLocal(addrReal)){
-        std::cout << "ERROR: couldn't get the address we bound to. " << std::endl;
-    }
-    else{
-        std::cout << "Server listening at" << addrReal.IPAddress() << " : " <<  addrReal.Service() << std::endl;
-    }
-
-// Setup the event handler and subscribe to connection events
-    SERVER_sock->SetEventHandler( *this, SERVER_ID);
-    SERVER_sock->SetNotify(wxSOCKET_CONNECTION_FLAG);
-    SERVER_sock->Notify(true);
-    numClients = 0;
-}
-
+// під'єднання КЛІЄНТІВ
 void Frame::ServerOnServerEvent(wxSocketEvent& event){
     std::cout << "OnServerEvent: " ;
     wxSocketBase *sockBase;
@@ -332,12 +366,14 @@ void Frame::ServerOnServerEvent(wxSocketEvent& event){
     sockBase ->Notify(true);
 
     numClients++;
-    SetStatusText(wxString::Format(wxT("%d  clients connected"),numClients), 1);
+    SetStatusText(wxString::Format(wxT("%d  clients connected"),numClients), 2);
 }
 
+
+// сервер читає отримане повідомлення і відправляє всім його
 void Frame::ServerOnSocketEvent(wxSocketEvent& event){
 
-    std::cout << "OnSocketEvent: ";
+    std::cout << "OnSocketEvent: SERVER";
     wxSocketBase *sockBase = event.GetSocket();
     wxSocketBase *sockBase_curr;
 
@@ -376,27 +412,32 @@ void Frame::ServerOnSocketEvent(wxSocketEvent& event){
 
             // Read the size @ first byte
             unsigned char len;
+//            size_t len;
             sockBase_curr->Read(&len, 1);
+//            MSG recv_msg;
             char buf[256];
             // Read the message
-            wxUint32 lenRd = sockBase_curr->Read(buf, len).LastCount();
+            wxUint32 lenRd = sockBase_curr->ReadMsg(&buf, (wxUint32) len).LastCount();
             if (!lenRd)		{
                 std::cout << "Failed to read message.\n";
                 return;
             }
             else {
-                std::cout << "Read  "<< lenRd << "bytes.\n";
+                std::cout << "Read SERVER_-> "<< lenRd << "bytes.\n";
             }
 
-            std::cout << "Rx: "<< wxString::FromUTF8(buf, len) <<" \n";
+            std::cout << "Rx: "<< buf <<" \n";
 
 
             wxSocketBase *sockBase_curr_2;
             for(auto it = clients.begin(); it != clients.end(); ++it){
                 sockBase_curr_2 = *it;
+// НЕ треба відправляти самому собі дані
+//                if(sockBase_curr_2 == sockBase_curr)
+//                    continue;
                 sockBase_curr_2->Write(&len,1);
-                sockBase_curr_2->Write(buf, len);
-                std::cout << "Tx: " << wxString::From8BitData(buf, len) << "\n";
+                sockBase_curr_2->Write(&buf, len);
+                std::cout << "Tx:  " << buf << "\n";
                 // Enable input events again.
                 sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 
@@ -426,6 +467,6 @@ void Frame::ServerOnSocketEvent(wxSocketEvent& event){
         default:;
     }
 
-    SetStatusText(wxString::Format(wxT("%d  clients connected"), numClients), 1);
+    SetStatusText(wxString::Format(wxT("%d  clients connected"), numClients), 2);
 }
 //_______________________SERVER__________________________________

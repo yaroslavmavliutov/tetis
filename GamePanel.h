@@ -7,6 +7,7 @@
 #include <wx/statline.h>
 #include <cmath>
 #include "wx/socket.h"
+#include <string>
 
 const wxColour colors[] =
         {
@@ -88,6 +89,7 @@ private:
     int TIMER_INTERVAL;
     PieceShape board[BoardWidth * BoardHeight];
 };
+
 
 #endif
 
