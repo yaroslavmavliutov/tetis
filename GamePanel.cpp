@@ -4,14 +4,14 @@
 #include <wx/stattext.h>
 #include <chrono>
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
 //<<<<<<< HEAD
 /*GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)*/
 //=======
-=======
->>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
+//=======
+//>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
 {

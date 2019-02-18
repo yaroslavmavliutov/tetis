@@ -33,22 +33,22 @@ Frame::Frame(const wxString& title)
     menubar->Append(file, wxT("&File"));
     SetMenuBar(menubar);
 
-<<<<<<< HEAD
-    sock = new wxSocketClient();
+//<<<<<<< HEAD
+    //sock = new wxSocketClient();
 
     // Setup the event handler and subscribe to most events
-    sock->SetEventHandler( *this, SOCKET_ID);
-    sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
-                    wxSOCKET_INPUT_FLAG |
-                    wxSOCKET_LOST_FLAG);
-    sock->Notify(true);
+    //sock->SetEventHandler( *this, SOCKET_ID);
+    //sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
+    //                wxSOCKET_INPUT_FLAG |
+    //                wxSOCKET_LOST_FLAG);
+    //sock->Notify(true);
 
 
     /*wxMessageBox( _("wxWidgets Hello World example."),
                   _("About Hello World"),
                   wxOK|wxICON_INFORMATION, this );*/
 
-    StartDialog *user = new StartDialog(wxT("CustomDialog"));
+    StartDialog *user = new StartDialog(wxT("LOG IN"));
 
     UserName = user->GetName();
     if (UserName == "") {
@@ -56,9 +56,9 @@ Frame::Frame(const wxString& title)
         Close(true);
     }
 
-=======
+//=======
     //statusScore = CreateStatusBar(3);
->>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
+//>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
     m_text  = new wxTextCtrl(this, -1,
                              wxString::Format(wxT("Your Score: %s"), UserName),
                              wxDefaultPosition, wxDefaultSize,
