@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <chrono>
 
+#define __GXX_ABI_VERSION 1011
+
 IMPLEMENT_APP(TetrisApp);
 
 bool TetrisApp::OnInit()

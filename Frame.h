@@ -10,13 +10,16 @@
 
 
 
-#define __GXX_ABI_VERSION 1010
+//#define __GXX_ABI_VERSION 1010
 typedef wxIPV4address IPaddress;
 
 // Define a new frame type: this is going to be our main frame
 class Frame : public wxFrame
 {
 public:
+
+    wxString UserName;
+
     // ctor(s)
     Frame(const wxString& title);
     ~Frame();

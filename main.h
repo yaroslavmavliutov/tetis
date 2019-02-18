@@ -14,7 +14,7 @@
 #include "wx/socket.h"
 
 #include "Frame.h"
-#define __GXX_ABI_VERSION 1010
+//#define __GXX_ABI_VERSION 1010
 class TetrisApp : public wxApp
 {
 public:

@@ -1,4 +1,5 @@
 #include "Frame.h"
+#include "StartDialog.h"
 
 using namespace std;
 
@@ -48,10 +49,25 @@ Frame::Frame(const wxString& title)
                     wxSOCKET_INPUT_FLAG |
                     wxSOCKET_LOST_FLAG);
     sock->Notify(true);
+
+
+    /*wxMessageBox( _("wxWidgets Hello World example."),
+                  _("About Hello World"),
+                  wxOK|wxICON_INFORMATION, this );*/
+
+    StartDialog *user = new StartDialog(wxT("CustomDialog"));
+
+    UserName = user->GetName();
+    if (UserName == "") {
+        user->Destroy();
+        Close(true);
+    }
+
     m_text  = new wxTextCtrl(this, -1,
-                             _("Welcome to wxSocket demo: Client\nClient ready\n"),
+                             wxString::Format(wxT("Your Score: %s"), UserName),
                              wxDefaultPosition, wxDefaultSize,
                              wxTE_MULTILINE | wxTE_READONLY);
+
 }
 
 void Frame::Setbusy(bool meaning) {
