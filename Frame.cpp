@@ -4,7 +4,7 @@
 using namespace std;
 
 Frame::Frame(const wxString& title)
-        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 380))
+        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 400))
 {
 
     busy = false;
@@ -203,11 +203,13 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
         statusScore = CreateStatusBar(3);
+        ServerSocket();
+        ClientSocket();
+        OpenConnection();
     }
 
-    ServerSocket();
-    ClientSocket();
-    OpenConnection();
+
+
 
 
 
@@ -228,8 +230,12 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
 
     srand(time(NULL));
 
-    hbox->Add(m_lp, 0, wxEXPAND | wxALL, 5);
-    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+//    hbox->Add(m_lp, 0, wxEXPAND | wxALL, 5);
+//    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+
+    hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
+    hbox->Add(m_rp, 0, wxSHAPED | wxALL, 5);
+
 
     m_parent->SetSizer(hbox);
 

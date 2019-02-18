@@ -2,7 +2,7 @@
 
 
 InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr)
-        :wxPanel(parent_t, wxID_ANY, wxPoint(190, 5), wxSize(305, 345), wxBORDER_SUNKEN)
+        :wxPanel(parent_t, wxID_ANY, wxPoint(190, 5), wxSize(305, 310), wxBORDER_SUNKEN)
 {
     panel = parent_t;
     Width = 23;
