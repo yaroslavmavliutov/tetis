@@ -12,10 +12,11 @@ public:
     StartDialog(const wxString& title);
 
     void Verification(wxCommandEvent& event);
-    wxString GetName();
+    std::string GetName();
 
     wxTextCtrl *input_name;
     wxString name;
+    std::string namestr;
 };
 
 const int ID_OK = 100;

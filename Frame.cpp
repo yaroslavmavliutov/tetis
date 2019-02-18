@@ -49,12 +49,16 @@ Frame::Frame(const wxString& title)
                   wxOK|wxICON_INFORMATION, this );*/
 
     StartDialog *user = new StartDialog(wxT("LOG IN"));
-
+    //username типу std::string
     UserName = user->GetName();
+    // це перевірка якшо хрестик для виходу нажали, то шоб не запустилось основне вікно, треба Close(true);
     if (UserName == "") {
         user->Destroy();
         Close(true);
     }
+    // тут записуємо в буфер значення
+    strcpy(BufferName, UserName.c_str());
+    //std::cout << "buff:  " << BufferName << "\n";
 
 //=======
     //statusScore = CreateStatusBar(3);
@@ -226,11 +230,11 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
 
     srand(time(NULL));
 
-//    hbox->Add(m_lp, 0, wxEXPAND | wxALL, 5);
-//    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+    hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
+    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
 
-    hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
-    hbox->Add(m_rp, 0, wxSHAPED | wxALL, 5);
+//    hbox->Add(m_lp, 0, wxSHAPED | wxALL, 5);
+//    hbox->Add(m_rp, 0, wxSHAPED | wxALL, 5);
 
 
     m_parent->SetSizer(hbox);

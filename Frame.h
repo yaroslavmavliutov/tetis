@@ -19,7 +19,8 @@ class Frame : public wxFrame
 {
 public:
 
-    wxString UserName;
+    std::string UserName;
+    char BufferName[6];
 
     // ctor(s)
     Frame(const wxString& title);

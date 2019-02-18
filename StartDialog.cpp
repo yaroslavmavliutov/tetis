@@ -3,6 +3,8 @@
 //
 
 #include "StartDialog.h"
+#include <string>
+#include <cstring>
 
 StartDialog::StartDialog(const wxString & title)
         : wxDialog(NULL, -1, title, wxDefaultPosition, wxSize(250, 230))
@@ -11,6 +13,7 @@ StartDialog::StartDialog(const wxString & title)
     wxBoxSizer *vbox = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer *hbox = new wxBoxSizer(wxHORIZONTAL);
     wxStaticText *pre =  new wxStaticText(panel, -1, wxT("What's your login?"), wxPoint(65, 70));
+    wxStaticText *len =  new wxStaticText(panel, -1, wxT("min-1, max-6"), wxPoint(80, 85));
     input_name = new wxTextCtrl(panel, -1, wxT(""),
                                     wxPoint(80, 105));
 
@@ -29,12 +32,16 @@ StartDialog::StartDialog(const wxString & title)
 void StartDialog::Verification(wxCommandEvent& WXUNUSED(event))
 {
     this->name=this->input_name->GetValue();
-    if (this->name == "")
+    if (this->name.empty() || this->name.length()>6)
         ;
-    else Destroy();
+    else {
+        this->namestr = std::string(this->name.mb_str(wxConvUTF8));
+        Destroy();
+    }
 }
 
-wxString StartDialog::GetName() {
-    return this->name;
+std::string StartDialog::GetName() {
+
+    return this->namestr;
 }
 
