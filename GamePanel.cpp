@@ -4,13 +4,8 @@
 #include <wx/stattext.h>
 #include <chrono>
 
-//<<<<<<< HEAD
-/*GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
-        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)*/
-//=======
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)
-//>>>>>>> 730d63129accab1d1d376ed3ab4885e11df74d90
 {
     sock = m_sock;
     timer = new wxTimer(this, 1);
@@ -226,27 +221,36 @@ void GamePanel::RemoveFullLines()
     status_scr->SetStatusText(str);
 
     //-----
+//    MSG my_mes;
+//    my_mes.id = 0;
+//    my_mes.login = "Nazar";
+//    my_mes.members = 1;
+//    my_mes.score = score;
+
     wxString str1 = std::to_string(score);
     wxCharBuffer buffer = str1.ToUTF8();
     size_t txn = str1.length();
-
+//    size_t txn = sizeof(my_mes);
+//    std::cout << "txn __________________________________ " << txn << std::endl;
     unsigned char len;
     len = txn;
+//    std::cout << "len __________________________________ " << len << std::endl;
     sock->Write(&len, 1);//send the length of the message first
     if (sock->Write(buffer.data(), txn).LastCount() != txn)
+    //if (sock->WriteMsg(&my_mes, (wxUint32) txn).LastCount() != txn)
     {
         //panel->m_up->txtRx->AppendText(wxT("Write error.\n"));
         std::cout << "Write error.\n ";
-        //return;
+        //return;z
     }
     else {
         //panel->m_up->txtRx->AppendText("Tx: " + str + "\n");
-        std::cout << "Tx: " << str1 << "\n";
+        std::cout << "Client send:  " << str1 << "\n";
     }
     //------
 
-    Frame *comm = (Frame *) panel->GetParent();
-    comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
+//    Frame *comm = (Frame *) panel->GetParent();
+//    comm->m_rp->string_score->SetLabel(wxString::Format(wxT("Score: %d"), score));
     //comm->m_rp->DrawScore(score);
 
     pieceFallingFinished = true;
