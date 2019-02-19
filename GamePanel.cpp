@@ -37,6 +37,7 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int
     Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
     Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GamePanel::OnKeyDown));
     Connect(wxEVT_TIMER, wxCommandEventHandler(GamePanel::OnTimer));
+    std::cout << "GamePanel - constructor" << std::endl;
 }
 
 void GamePanel::Start()
@@ -236,17 +237,18 @@ void GamePanel::RemoveFullLines()
         wxString str1 = std::to_string(score);
         wxCharBuffer buffer = str1.ToUTF8();
         size_t txn = str1.length();
-        unsigned char len;
-        len = txn;
-        sock->Write(&len, 1);//send the length of the message first
-
-        if (sock->Write(buffer.data(), txn).LastCount() != txn)
-        {
-            std::cout << "Write error.\n ";
-        }
-        else {
-            std::cout << "Client send:  " << str1 << "\n";
-        }
+        std::cout << "GAME_PANAL txn = " << txn << std::endl;
+         unsigned char len;
+         len = txn;
+         sock->Write(&len, 1);//send the length of the message first
+         if (sock->Write(buffer.data(), txn).LastCount() != txn)
+         {
+             std::cout << "Write error.\n";
+             return;
+         }
+         else {
+             std::cout << "CLIENT send score Tx: " << str1 << "\n";
+         }
     }
 
     pieceFallingFinished = true;
@@ -290,7 +292,6 @@ void GamePanel::MakeNewPiece()
 
         Frame *comm = (Frame *) panel->GetParent();
         comm->file->Enable(ID_PLAY, true);
-        std::cout << "Do you want to be a server (s)";
         comm->Setbusy(true);
         //panel->Destroy();
     }

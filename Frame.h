@@ -19,6 +19,7 @@ class Frame : public wxFrame
 {
 public:
 
+    Frame * fr;
     std::string UserName;
     char BufferName[6];
 
@@ -46,7 +47,10 @@ public:
     std::list<wxSocketBase *> clients;
     wxSocketServer *SERVER_sock;
     int numClients;
-   //SERVER
+    int want_players;
+
+    void StartPanels(int N);
+    //SERVER
     // convenience functions
     void UpdateStatusBar();
 //-----------------------------------------------------------------------------------------
