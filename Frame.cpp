@@ -9,7 +9,7 @@ Frame::Frame(const wxString& title)
 
     busy = false;
     menubar = new wxMenuBar; // menubar
-
+    fr = this;
     file = new wxMenu; //menu
 
     file->Append(ID_PLAY, wxT("&Play alone"));
@@ -28,25 +28,19 @@ Frame::Frame(const wxString& title)
             wxCommandEventHandler(Frame::OnPlay));
 
 
+    //Create game
+    Connect(ID_CREATE_GAME, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(Frame::OnCreate));
+    // Join game
+    Connect(ID_JOIN_GAME, wxEVT_COMMAND_MENU_SELECTED,
+            wxCommandEventHandler(Frame::OnJoin));
+
+
+
     Center();
 
     menubar->Append(file, wxT("&File"));
     SetMenuBar(menubar);
-
-//<<<<<<< HEAD
-    //sock = new wxSocketClient();
-
-    // Setup the event handler and subscribe to most events
-    //sock->SetEventHandler( *this, SOCKET_ID);
-    //sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
-    //                wxSOCKET_INPUT_FLAG |
-    //                wxSOCKET_LOST_FLAG);
-    //sock->Notify(true);
-
-
-    /*wxMessageBox( _("wxWidgets Hello World example."),
-                  _("About Hello World"),
-                  wxOK|wxICON_INFORMATION, this );*/
 
     StartDialog *user = new StartDialog(wxT("LOG IN"));
     //username типу std::string
@@ -58,11 +52,7 @@ Frame::Frame(const wxString& title)
     }
     // тут записуємо в буфер значення
     strcpy(BufferName, UserName.c_str());
-    //std::cout << "buff:  " << BufferName << "\n";
 
-//=======
-    //statusScore = CreateStatusBar(3);
-//>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
     m_text  = new wxTextCtrl(this, -1,
                              wxString::Format(wxT("Your Score: %s"), UserName),
                              wxDefaultPosition, wxDefaultSize,
@@ -242,6 +232,99 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     this->Centre();
 }
 
+
+
+void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
+
+    file->Enable(ID_PLAY, false);
+    file->Enable(ID_CREATE_GAME, false);
+    file->Enable(ID_JOIN_GAME, false);
+
+    if (this->busy) {
+
+        m_lp->Destroy();
+        m_rp->Destroy();
+
+    } else {
+        m_text->Destroy();
+        m_parent = new wxPanel(this, wxID_ANY);
+        statusScore = CreateStatusBar(3);
+
+    }
+
+    want_players = 2;
+
+
+    ServerSocket();
+    ClientSocket();
+    OpenConnection();
+
+
+    std::cout << "SERVER waiting for players" << std::endl;
+
+}
+
+
+
+void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
+    file->Enable(ID_PLAY, false);
+    file->Enable(ID_CREATE_GAME, false);
+    file->Enable(ID_JOIN_GAME, false);
+
+    if (this->busy) {
+
+        m_lp->Destroy();
+        m_rp->Destroy();
+
+    } else {
+        m_text->Destroy();
+        m_parent = new wxPanel(this, wxID_ANY);
+        statusScore = CreateStatusBar(3);
+
+    }
+
+
+    ClientSocket();
+    OpenConnection();
+    std::cout<<"CLIENT waiting for all players" << std::endl;
+
+}
+
+
+void Frame::StartPanels(int N) {
+
+
+    statusScore->SetStatusText(wxT("Your lvl: 1"));
+
+    hbox = new wxBoxSizer(wxHORIZONTAL);
+
+    std::cout<<"N -> "<< N <<std::endl;
+    m_lp = new GamePanel(m_parent, fr, sock, N); // 0 - opponents
+//    std::map<std::string, int> my_map = {
+//            { "A", 1 },
+//            { "B", 2 },
+//            { "C", 3 }
+//    };
+    std::cout<<"INFO"<<std::endl;
+    m_rp = new InfoPanel(m_parent, fr, N); // 0 - opponents
+    //Start tetris
+    std::cout<<"ICI_start"<<std::endl;
+
+    m_lp->SetFocus();
+    m_lp->Start();
+    std::cout<<"ICI_after start"<<std::endl;
+    srand(time(NULL));
+
+    hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
+    hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
+
+    m_parent->SetSizer(hbox);
+    std::cout<<"ICI_4"<<std::endl;
+
+    Centre();
+}
+
+
 void Frame::CloseConnection()
 {
     sock->Close();
@@ -280,25 +363,42 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             // This way we can avoid the infamous wxSOCKET_BLOCK flag.
 
             sockBase->SetFlags(wxSOCKET_WAITALL);
-
             // Read the size @ first byte
-           unsigned char len;
-//            size_t len;
+            unsigned char len;
             sockBase->Read(&len, 1);
-//            MSG recv_msg;
             char buf[256];
             // Read the message
-            wxUint32 lenRd = sockBase->Read(&buf, len).LastCount();
+            wxUint32 lenRd = sockBase->Read(buf, len).LastCount();
             if (!lenRd) {
                 std::cout<< "Failed to read message." << std::endl;
-                return;
+//                return;
             }
             else {
-                std::cout<< "Read CLIENT" <<lenRd <<" bytes."  << std::endl;
+                std::cout<< "CLIENT Read  -> " <<lenRd <<" bytes."  << std::endl;
             }
-//            std::cout << "AA";
-            score = std::stoi( buf );
-            m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Server Score: %d"), score));
+            std::cout << "BUF -> " << buf <<std::endl;
+
+            // обробка повідомлення з сервера
+
+            std::cout << "AA";
+            if (strncmp( buf, "start", (size_t) 5 )==0){
+//             запустити груу!!!!
+                std::string mystr(buf);
+                int n = std::stoi(std::to_string((int) mystr[5]));
+                std::cout << "LETS START THE GAME! with " << n << " players" << std::endl;
+
+                StartPanels(1);
+            }else
+            {
+                std::cout << "Non start MSG";
+                score = std::stoi( buf );
+                m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Score: %d"), score));
+            }
+
+
+
+//            score = std::stoi( buf );
+//            m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Server Score: %d"), score));
 
             //std::cout<< "Rx: " <<  wxString::FromUTF8(buf, len) << std::endl;
             // Enable input events again.
@@ -307,6 +407,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
         }
         default: {
             std::cout<<"default" << std::endl;
+            break;
         }
     }
 
@@ -373,6 +474,30 @@ void Frame::ServerOnServerEvent(wxSocketEvent& event){
 
     numClients++;
     SetStatusText(wxString::Format(wxT("%d  clients connected"),numClients), 2);
+
+    //    відправлення повідомлення про старт гри
+   if(numClients == want_players){
+      //send start to all players
+      char start[7] = "start";
+      start[5] = static_cast<char>(48+numClients);
+      size_t txn = strlen(start);
+
+       unsigned char len;
+       len = txn;
+
+      wxSocketBase *sockBase_curr_2;
+      for(auto it = clients.begin(); it != clients.end(); ++it){
+          sockBase_curr_2 = *it;
+          sockBase_curr_2->Write(&len,1);
+          sockBase_curr_2->Write(&start, len);
+          std::cout << "send start_MSG:  " << start << "\n";
+          // Enable input events again.
+          sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+
+      }
+
+
+  }
 }
 
 
@@ -418,21 +543,20 @@ void Frame::ServerOnSocketEvent(wxSocketEvent& event){
 
             // Read the size @ first byte
             unsigned char len;
-//            size_t len;
-            sockBase_curr->Read(&len, 1);
-//            MSG recv_msg;
+            sockBase->Read(&len, 1);
             char buf[256];
             // Read the message
-            wxUint32 lenRd = sockBase_curr->ReadMsg(&buf, (wxUint32) len).LastCount();
+            wxUint32 lenRd = sockBase->Read(buf, len).LastCount();
             if (!lenRd)		{
                 std::cout << "Failed to read message.\n";
                 return;
             }
             else {
-                std::cout << "Read SERVER_-> "<< lenRd << "bytes.\n";
+                std::cout << "SERVER_ Read -> "<< lenRd << "bytes.\n";
             }
 
-            std::cout << "Rx: "<< buf <<" \n";
+
+            std::cout << "Server buf Rx: "<< buf <<" \n";
 
 
             wxSocketBase *sockBase_curr_2;
@@ -443,7 +567,7 @@ void Frame::ServerOnSocketEvent(wxSocketEvent& event){
                     continue;
                 sockBase_curr_2->Write(&len,1);
                 sockBase_curr_2->Write(&buf, len);
-                std::cout << "Tx:  " << buf << "\n";
+                std::cout << "Server send Tx:  " << buf << "\n";
                 // Enable input events again.
                 sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 
