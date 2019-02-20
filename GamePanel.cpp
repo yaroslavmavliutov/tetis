@@ -292,7 +292,23 @@ void GamePanel::MakeNewPiece()
 
         Frame *comm = (Frame *) panel->GetParent();
         comm->file->Enable(ID_PLAY, true);
+        comm->file->Enable(ID_CREATE_GAME, true);
+        comm->file->Enable(ID_JOIN_GAME, true);
+        //write Lose MSG
+        char lose[5] = "lose";
+        size_t txn = strlen(lose);
+        unsigned char len;
+        len = txn;
+
+        sock->Write(&len,1);
+        sock->Write(&lose, len);
+        sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+
+
+        comm->server_on = true;
         comm->Setbusy(true);
+        comm->m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("You Lose")));
+        comm-> CloseConnection();
         //panel->Destroy();
     }
 }
