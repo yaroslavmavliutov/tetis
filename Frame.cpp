@@ -8,6 +8,7 @@ Frame::Frame(const wxString& title)
 {
 
     busy = false;
+    server_on = false;
     menubar = new wxMenuBar; // menubar
     fr = this;
     file = new wxMenu; //menu
@@ -69,7 +70,6 @@ Frame::~Frame()
 {
     // No delayed deletion here, as the frame is dying anyway
     delete sock;
-    delete SERVER_sock;
 }
 
 void Frame::OnQuit(wxCommandEvent& WXUNUSED(event))
@@ -117,37 +117,6 @@ void Frame:: ClientSocket(){
     sock->Notify(true);
 }
 
-// відкриття сокету сервера
-void Frame::ServerSocket()
-{
-    IPaddress addr;
-    addr.AnyAddress();
-    addr.Service(3000);
-    std::cout << "Creating server at " << addr.IPAddress() << ": " <<  addr.Service() << std::endl;
-
-    // Create the socket
-    SERVER_sock = new wxSocketServer(addr);
-
-    // We use IsOk() here to see if the server is really listening
-    if (!SERVER_sock->IsOk()){
-        std::cout << "Could not listen at the specified port !"<< std::endl;
-    }
-
-    IPaddress addrReal;
-    if (!SERVER_sock->GetLocal(addrReal)){
-        std::cout << "ERROR: couldn't get the address we bound to. " << std::endl;
-    }
-    else{
-        std::cout << "Server listening at" << addrReal.IPAddress() << " : " <<  addrReal.Service() << std::endl;
-    }
-
-    // Setup the event handler and subscribe to connection events
-    SERVER_sock->SetEventHandler( *this, SERVER_ID);
-    SERVER_sock->SetNotify(wxSOCKET_CONNECTION_FLAG);
-    SERVER_sock->Notify(true);
-    numClients = 0;
-    clients_in_game = 0;
-}
 
 // Встановлення з'єднання з сервером
 void Frame::OpenConnection()
@@ -167,8 +136,6 @@ void Frame::OpenConnection()
     addr.Service(3000);
     std::cout<<"Trying to connect to " << addr.IPAddress() << " : " << addr.Service() << std::endl;
 
-//    file->Enable(CLIENT_OPEN, false);
-//    file->Enable(CLIENT_CLOSE, false);
     // we connect asynchronously and will get a wxSOCKET_CONNECTION event when
     // the connection is really established
     //
@@ -197,9 +164,6 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
         statusScore = CreateStatusBar(3);
-//        ServerSocket();
-//        ClientSocket();
-//        OpenConnection();
     }
 
 
@@ -254,8 +218,12 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
 
     want_players = 2;
 
+    if (!server_on){
+        Server *my_server = new Server(wxT("Server"), want_players);
+        my_server->Show(true);
+    }
 
-    ServerSocket();
+
     ClientSocket();
     OpenConnection();
 
@@ -305,22 +273,19 @@ void Frame::StartPanels(int N) {
 //            { "B", 2 },
 //            { "C", 3 }
 //    };
-    std::cout<<"INFO"<<std::endl;
+
     m_rp = new InfoPanel(m_parent, fr, N); // 0 - opponents
     //Start tetris
-    std::cout<<"ICI_start"<<std::endl;
 
     m_lp->SetFocus();
     m_lp->Start();
-    std::cout<<"ICI_after start"<<std::endl;
+
     srand(time(NULL));
 
     hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
 
     m_parent->SetSizer(hbox);
-    std::cout<<"ICI_4"<<std::endl;
-
     Centre();
 }
 
@@ -376,11 +341,9 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             else {
                 std::cout<< "CLIENT Read  -> " <<lenRd <<" bytes."  << std::endl;
             }
-            std::cout << "BUF -> " << buf <<std::endl;
 
             // обробка повідомлення з сервера
 
-            std::cout << "AA";
             if (strncmp( buf, "start", (size_t) 5 )==0){
 //             запустити груу!!!!
                 std::string mystr(buf);
@@ -388,6 +351,15 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                 std::cout << "LETS START THE GAME! with " << n << " players" << std::endl;
 
                 StartPanels(1);
+            } else if (strncmp( buf, "lose", (size_t) 4 )==0){
+//                file->Enable(ID_PLAY, true);
+//                file->Enable(ID_CREATE_GAME, true);
+//                file->Enable(ID_JOIN_GAME, true);
+//                this->busy = true;
+//                CloseConnection();
+                std::cout << "Non start MSG";
+                m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Lose")));
+
             }else
             {
                 std::cout << "Non start MSG";
@@ -417,8 +389,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
 
 void Frame::UpdateStatusBar()
 {
-//    file->Enable(CLIENT_OPEN, !sock->IsConnected());
-//    file->Enable(CLIENT_CLOSE, sock->IsConnected());
+
     if (sock->IsConnected()) {
         SetStatusText(wxString::Format(wxT("Connected")), 2);
     }
@@ -426,177 +397,3 @@ void Frame::UpdateStatusBar()
         SetStatusText(wxString::Format(wxT("Not connected")), 2);
     }
 }
-
-//_______________________SERVER__________________________________
-
-
-// під'єднання КЛІЄНТІВ
-void Frame::ServerOnServerEvent(wxSocketEvent& event){
-    std::cout << "OnServerEvent: " ;
-    wxSocketBase *sockBase;
-
-    switch (event.GetSocketEvent())
-    {
-        case wxSOCKET_CONNECTION: std::cout <<"wxSOCKET_CONNECTION\n"; break;
-        default: std::cout << "Unexpected event !\n"; break;
-    }
-
-    // Accept new connection if there is one in the pending
-    // connections queue, else exit. We use Accept(false) for
-    // non-blocking accept (although if we got here, there
-    // should ALWAYS be a pending connection).
-    if(numClients <= 3) {
-        sockBase = SERVER_sock->Accept(false);
-        clients.push_back(sockBase);
-    }
-
-    if (sockBase )
-    {
-        IPaddress addr;
-        if (!sockBase->GetPeer(addr))
-        {
-            std::cout << "New connection from unknown client accepted.\n";
-        }
-        else
-        {
-            std::cout << "New client connection from " <<  addr.IPAddress() << " : " << addr.Service() << " accepted \n";
-        }
-    }
-    else
-    {
-        std::cout << "Error: couldn't accept a new connection \n";
-        //return;
-    }
-
-    sockBase ->SetEventHandler( *this, SOCKET_ID);
-    sockBase ->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
-    sockBase ->Notify(true);
-
-    numClients++;
-    SetStatusText(wxString::Format(wxT("%d  clients connected"),numClients), 2);
-
-    //    відправлення повідомлення про старт гри
-   if(numClients == want_players){
-      //send start to all players
-      char start[7] = "start";
-      start[5] = static_cast<char>(48+numClients);
-      size_t txn = strlen(start);
-
-       unsigned char len;
-       len = txn;
-
-      wxSocketBase *sockBase_curr_2;
-      for(auto it = clients.begin(); it != clients.end(); ++it){
-          sockBase_curr_2 = *it;
-          sockBase_curr_2->Write(&len,1);
-          sockBase_curr_2->Write(&start, len);
-          std::cout << "send start_MSG:  " << start << "\n";
-          // Enable input events again.
-          sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-
-      }
-
-
-  }
-}
-
-
-// сервер читає отримане повідомлення і відправляє всім його
-void Frame::ServerOnSocketEvent(wxSocketEvent& event){
-
-    std::cout << "OnSocketEvent: SERVER";
-    wxSocketBase *sockBase = event.GetSocket();
-    wxSocketBase *sockBase_curr;
-
-    // find the right client
-    for(auto it = clients.begin(); it != clients.end(); ++it){
-        if(*it == sockBase){
-            sockBase_curr = *it;
-            break;
-        }
-    }
-
-    // First, print a message
-    switch (event.GetSocketEvent())
-    {
-        case wxSOCKET_INPUT: std::cout << "wxSOCKET_INPUT\n"; break;
-        case wxSOCKET_LOST: std::cout << "wxSOCKET_LOST\n"; break;
-        default: std::cout << "Unexpected event !\n"; break;
-    }
-
-    // Now we process the event
-    switch (event.GetSocketEvent())
-    {
-        case wxSOCKET_INPUT:
-        {
-            // We disable input events, so that the test doesn't trigger
-            // wxSocketEvent again.
-            sockBase_curr->SetNotify(wxSOCKET_LOST_FLAG);
-
-            // Receive data from socket and send it back. We will first
-            // get a byte with the buffer size, so we can specify the
-            // exact size and use the wxSOCKET_WAITALL flag. Also, we
-            // disabled input events so we won't have unwanted reentrance.
-            // This way we can avoid the infamous wxSOCKET_BLOCK flag.
-
-            sockBase_curr->SetFlags(wxSOCKET_WAITALL);
-
-            // Read the size @ first byte
-            unsigned char len;
-            sockBase->Read(&len, 1);
-            char buf[256];
-            // Read the message
-            wxUint32 lenRd = sockBase->Read(buf, len).LastCount();
-            if (!lenRd)		{
-                std::cout << "Failed to read message.\n";
-                return;
-            }
-            else {
-                std::cout << "SERVER_ Read -> "<< lenRd << "bytes.\n";
-            }
-
-
-            std::cout << "Server buf Rx: "<< buf <<" \n";
-
-
-            wxSocketBase *sockBase_curr_2;
-            for(auto it = clients.begin(); it != clients.end(); ++it){
-                sockBase_curr_2 = *it;
-// НЕ треба відправляти самому собі дані
-                if(sockBase_curr_2 == sockBase_curr)
-                    continue;
-                sockBase_curr_2->Write(&len,1);
-                sockBase_curr_2->Write(&buf, len);
-                std::cout << "Server send Tx:  " << buf << "\n";
-                // Enable input events again.
-                sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-
-            }
-
-            break;
-        }
-        case wxSOCKET_LOST:
-        {
-            numClients--;
-
-            // Destroy() should be used instead of delete wherever possible,
-            // due to the fact that wxSocket uses 'delayed events' (see the
-            // documentation for wxPostEvent) and we don't want an event to
-            // arrive to the event handler (the frame, here) after the socket
-            // has been deleted. Also, we might be doing some other thing with
-            // the socket at the same time; for example, we might be in the
-            // middle of a test or something. Destroy() takes care of all
-            // this for us.
-
-            std::cout << "Deleting socket.\n";
-            clients.remove(sockBase_curr);
-            sockBase_curr->Destroy();
-
-            break;
-        }
-        default:;
-    }
-
-    SetStatusText(wxString::Format(wxT("%d  clients connected"), numClients), 2);
-}
-//_______________________SERVER__________________________________

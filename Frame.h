@@ -9,6 +9,7 @@
 #include "wx/socket.h"
 #include <list>
 #include <string>
+#include "Server.h"
 
 
 //#define __GXX_ABI_VERSION 1010
@@ -40,17 +41,9 @@ public:
 
    // ________CLIENT________________
 
-   // SERVER
-    void ServerOnServerEvent(wxSocketEvent& event);
-    void ServerOnSocketEvent(wxSocketEvent& event);
-
-    std::list<wxSocketBase *> clients;
-    wxSocketServer *SERVER_sock;
-    int numClients;
     int want_players;
-
     void StartPanels(int N);
-    //SERVER
+
     // convenience functions
     void UpdateStatusBar();
 //-----------------------------------------------------------------------------------------
@@ -70,13 +63,14 @@ public:
     IPaddress IP_addr;
     int clients_in_game;
     bool busy;
+    bool server_on;
     wxBoxSizer *hbox;
     wxTextCtrl *m_text;
     wxMenuBar *menubar; // new
     wxMenu *file; // File + vkladki
 
 
-    wxSocketClient *sock;
+    wxSocketClient *sock; // client
 
 private:
     wxMenu *helpMenu;
@@ -94,9 +88,9 @@ const int ID_PLAY = 113;
 // IDs for the controls and the menu commands
 enum
 {
-    ID_TXTRX=101,
-    SERVER_SOCKET_ID,
-    SERVER_ID,
+//    ID_TXTRX=101,
+//    SERVER_SOCKET_ID,
+//    SERVER_ID,
     SOCKET_ID, // CLIENT
     CLIENT_OPEN=wxID_OPEN,
     CLIENT_CLOSE=wxID_CLOSE,
