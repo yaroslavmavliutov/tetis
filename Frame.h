@@ -1,6 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
+#include "Opponents.h"
 #include "GamePanel.h"
 #include "InfoPanel.h"
 #include <wx/wxprec.h>
@@ -9,6 +10,7 @@
 #include "wx/socket.h"
 #include <list>
 #include <string>
+#include <cstring>
 #include "Server.h"
 
 
@@ -38,7 +40,7 @@ public:
     void ClientSocket();
     void ServerSocket();
 
-
+    Opponents* opPanel;
    // ________CLIENT________________
 
     int want_players;

@@ -40,11 +40,15 @@ class GamePanel : public wxPanel
 {
 public:
     GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *sock, int nb_opponent);
+    GamePanel(wxPanel* parent_t, wxFrame *fr);
     void Start();
     void Pause();
     PieceShape GetNextShape() const { return next.GetShape(); }
     int nb_opponent;
+    bool special; // Для простого відображення борду
     /* wx event handlers */
+    void setNextPiece(char c);
+    void setCurrentPiece(char c);
 
 protected:
     void OnPaint(wxPaintEvent& event);
@@ -62,7 +66,8 @@ private:
     int Height() { return GetClientSize().GetHeight() / BoardHeight; }
     static bool CheckBounds(int x, int y) { return x >= 0 && x < BoardWidth && y >= 0 && y < BoardHeight; }
 
-
+    void sendShapeToServer(PieceShape ps, int next_or_curr);
+    void sendMoveToServer(char c);
     void ClearBoard();
     void DropDown();
     void DropOneLine();
