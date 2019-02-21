@@ -85,6 +85,35 @@ void Server::OnQuit(wxCommandEvent& WXUNUSED(event))
     Close(true);
 }
 
+
+
+char * Server::substr(char *str, int start, int length=0) {
+    char *s;
+    // Определить длину исходной строки
+    int len = 0;
+    for (int i = 0; str[i] != '\0'; i++)
+        len++;
+    // Определить позицию последнего символа подстроки
+    if (length > 0)
+    {
+        if (start + length < len)
+            len = start + length;
+    }
+    else // length < 0
+        len = len + length;
+    int newlen = len - start + 1; // длина подстроки
+    s = new char[newlen];
+    // Копирование символов подстроки
+    int j = 0;
+    for (int i = start; i<len; i++)
+    {
+        s[j] = str[i]; j++;
+    }
+    s[j] = '\0';
+    return(s);
+}
+
+
 void Server::OnAbout(wxCommandEvent& WXUNUSED(event))
 {
     wxMessageBox(wxString::Format
@@ -146,30 +175,17 @@ void Server::OnServerEvent(wxSocketEvent& event)
     numClients++;
     SetStatusText(wxString::Format(wxT("%d  clients connected"),numClients), 1);
 
-    //    відправлення повідомлення про старт гри
-    if(numClients == want_players){
-        //send start to all players
-        char start[7] = "start";
-        start[5] = static_cast<char>(48+numClients);
-        size_t txn = strlen(start);
+    char connected[5] = "conn";
+    size_t txn = strlen(connected);
+    unsigned char len;
+    len = txn;
 
-        unsigned char len;
-        len = txn;
-
-        wxSocketBase *sockBase_curr_2;
-        for(auto it = clients.begin(); it != clients.end(); ++it){
-            sockBase_curr_2 = *it;
-            sockBase_curr_2->Write(&len,1);
-            sockBase_curr_2->Write(&start, len);
-            txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), start));
-            //std::cout << "send start_MSG:  " << start << "\n";
-            // Enable input events again.
-            sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-
-        }
-
-
-    }
+    sockBase->Write(&len,1);
+    sockBase->Write(&connected, len);
+    txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), connected));
+        //std::cout << "send start_MSG:  " << start << "\n";
+        // Enable input events again.
+     //sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 
 }
 
@@ -232,23 +248,64 @@ void Server::OnSocketEvent(wxSocketEvent& event)
 
             txtRx->AppendText(wxString::Format(wxT("Server Read x: %s \n"),wxString::FromUTF8(buf, len)));
 
+            if(strncmp( buf, "login", (size_t) 5 )==0){
+                int n = len ;//- '0';
+//                std::cout << "login n -> " << n << std::endl;
+                tabellog[numClients-1] = substr(buf, 5, n-5);
+//                std::cout << "tabellog[0] -> " << tabellog[0]<< std::endl;
+                sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+                //    відправлення повідомлення про старт гри
+                if(numClients == want_players){
+                    //send start to all players
+                    char start[37] = "start";
+                    start[5] = static_cast<char>(48+numClients);
+                    for(int i=0; i<numClients; i++){
+                        start[6+i] = static_cast<char>(48+strlen(tabellog[i]));
+                    }
+                    for(int i=0; i<numClients; i++){
+                        strcat(start, tabellog[i]);
+                    }
 
-            wxSocketBase *sockBase_curr_2;
-            for(auto it = clients.begin(); it != clients.end(); ++it){
-                sockBase_curr_2 = *it;
-                // НЕ треба відправляти самому собі дані
-                if(sockBase_curr_2 == sockBase_curr){
-                    sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-                    continue;
+                    size_t txn = strlen(start);
+
+                    unsigned char len;
+                    len = txn;
+
+                    wxSocketBase *sockBase_curr_2;
+                    for(auto it = clients.begin(); it != clients.end(); ++it){
+                        sockBase_curr_2 = *it;
+                        sockBase_curr_2->Write(&len,1);
+                        sockBase_curr_2->Write(&start, len);
+                        txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), start));
+                        //std::cout << "send start_MSG:  " << start << "\n";
+                        // Enable input events again.
+                        sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+
+                    }
+
+
                 }
 
-                sockBase_curr_2->Write(&len,1);
-                sockBase_curr_2->Write(&buf, len);
-                txtRx->AppendText("Server: Tx: " + wxString::From8BitData(buf, len) + "\n");
-                // Enable input events again.
-                sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+            }else{
+                wxSocketBase *sockBase_curr_2;
+                for(auto it = clients.begin(); it != clients.end(); ++it){
+                    sockBase_curr_2 = *it;
+                    // НЕ треба відправляти самому собі дані
+                    if(sockBase_curr_2 == sockBase_curr){
+                        sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+                        continue;
+                    }
 
+                    sockBase_curr_2->Write(&len,1);
+                    sockBase_curr_2->Write(&buf, len);
+                    txtRx->AppendText("Server: Tx: " + wxString::From8BitData(buf, len) + "\n");
+                    // Enable input events again.
+                    sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+
+                }
             }
+
+
 
             break;
         }

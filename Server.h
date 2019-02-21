@@ -28,6 +28,9 @@ class Server: public wxFrame
     std::list<wxSocketBase *> clients;
     char logins[35];
 
+    char *tabellog [3];
+    static char* substr(char *str, int start, int length);
+
     private:
 
     wxSocketServer *sock;

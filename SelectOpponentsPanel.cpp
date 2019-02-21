@@ -50,7 +50,7 @@ void SelectOpponentsPanel::Verification(wxCommandEvent& WXUNUSED(event))
         Destroy();
     }
     else if (this->chice2) {
-        this->count_of_opponents = 2;
+        this->count_of_opponents = 3;
         Destroy();
     }
 }
