@@ -26,7 +26,7 @@ class Server: public wxFrame
     void OnSocketEvent(wxSocketEvent& event);
     //wxSocketBase *clients[3];
     std::list<wxSocketBase *> clients;
-
+    char logins[35];
 
     private:
 

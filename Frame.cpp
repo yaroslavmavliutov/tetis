@@ -55,7 +55,7 @@ Frame::Frame(const wxString& title)
     strcpy(BufferName, UserName.c_str());
 
     m_text  = new wxTextCtrl(this, -1,
-                             wxString::Format(wxT("Your Score: %s"), UserName),
+                             wxString::Format(wxT("Your login: %s "), UserName),
                              wxDefaultPosition, wxDefaultSize,
                              wxTE_MULTILINE | wxTE_READONLY);
 
@@ -143,6 +143,25 @@ void Frame::OpenConnection()
     // could call WaitOnConnect(timeout) instead
 
     sock->Connect(addr, false);
+
+//    char login[] = "start";
+//    start[5] = static_cast<char>(48+numClients);
+//    size_t txn = strlen(start);
+//
+//    unsigned char len;
+//    len = txn;
+//
+//    wxSocketBase *sockBase_curr_2;
+//    for(auto it = clients.begin(); it != clients.end(); ++it){
+//        sockBase_curr_2 = *it;
+//        sockBase_curr_2->Write(&len,1);
+//        sockBase_curr_2->Write(&start, len);
+//        txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), start));
+//        std::cout << "send start_MSG:  " << start << "\n";
+//         Enable input events again.
+//        sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+//
+//    }
 
     //update status
     UpdateStatusBar();
@@ -261,6 +280,8 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
 void Frame::StartPanels(int N) {
 
+    opPanel = new Opponents(wxT("Opponents"), 1);
+    opPanel->Show(true);
 
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
@@ -282,11 +303,14 @@ void Frame::StartPanels(int N) {
 
     srand(time(NULL));
 
+
+
     hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
 
     m_parent->SetSizer(hbox);
-    Centre();
+
+    //Centre();
 }
 
 
@@ -360,7 +384,18 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                 std::cout << "Non start MSG";
                 m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Lose")));
 
-            }else
+            }else if (strncmp( buf, "move", (size_t) 4 )==0){
+                std::cout << "MOVE      -> " << buf << std::endl;
+                std::cout << "END       -> " << buf[4] << std::endl;
+            }else if(strncmp( buf, "next", (size_t) 4 )==0){
+                std::cout << "NEXT fig      -> " << buf[4] << std::endl;
+                opPanel->m_lp->setNextPiece(buf[4]);
+            }
+            else if(strncmp( buf, "curr", (size_t) 4 )==0){
+                std::cout << "CURR fig      -> " << buf[4] << std::endl;
+                opPanel->m_lp->setCurrentPiece(buf[4]);
+            }
+            else
             {
                 std::cout << "Non start MSG";
                 score = std::stoi( buf );
