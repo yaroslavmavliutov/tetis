@@ -4,14 +4,7 @@
 #include <wx/stattext.h>
 #include <chrono>
 
-//<<<<<<< HEAD
 
-//<<<<<<< HEAD
-/*GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
-        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(175, 345), wxBORDER_SUNKEN)*/
-//=======
-//=======
-//>>>>>>> 77c804e459404e64a9930bacdbb1931f3431fbfc
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
 {
@@ -61,7 +54,9 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int
 
     PieceShape tmp;
     tmp = PieceShape(rand()%7+1);
-    sendShapeToServer(tmp, 1);
+    if(nb_opponent>0) {
+        sendShapeToServer(tmp, 1);
+    }
     next.SetShape(tmp);
 
     nb_opponent = m_nb_opponent;
@@ -136,6 +131,29 @@ void GamePanel::setCurrentPiece(char c) {
             ps = None;
     }
     current.SetShape(ps);
+}
+
+void GamePanel::SetMovement(char c) {
+    switch (c) {
+        case 'd':
+            DropDown();
+            break;
+        case 'm':
+            DoMove(current.Rotation(), curX, curY);
+            break;
+        case 'o':
+            DropOneLine();
+            break;
+        case 'l':
+            DoMove(current, curX - 1, curY);
+            break;
+        case 'r':
+            DoMove(current, curX + 1, curY);
+            break;
+        default:
+            //event.Skip();
+            std::cout << "Non move value" << std::endl;
+    }
 }
 
 void GamePanel::Start()
@@ -447,7 +465,8 @@ void GamePanel::RandomPiece()
     if (!special) {
         PieceShape tmp;
         tmp = PieceShape(rand() % 7 + 1);
-        sendShapeToServer(tmp, 1);
+        if(nb_opponent>0)
+            sendShapeToServer(tmp, 1);
         next.SetShape(tmp);
         Frame *comm = (Frame *) panel->GetParent();
 
@@ -468,7 +487,8 @@ void GamePanel::MakeNewPiece()
     if (!DoMove(current, curX, curY))
     {
         current.SetShape(None);
-        sendShapeToServer(None, 0);
+        if(nb_opponent>0)
+            sendShapeToServer(None, 0);
         timer->Stop();
         started = false;
         status_scr->SetStatusText(wxT("You Lose :("));
@@ -478,19 +498,22 @@ void GamePanel::MakeNewPiece()
             comm->file->Enable(ID_CREATE_GAME, true);
             comm->file->Enable(ID_JOIN_GAME, true);
             //write Lose MSG
-            char lose[5] = "lose";
-            size_t txn = strlen(lose);
-            unsigned char len;
-            len = txn;
+            if(nb_opponent>0){
+                char lose[5] = "lose";
+                size_t txn = strlen(lose);
+                unsigned char len;
+                len = txn;
 
-            sock->Write(&len, 1);
-            sock->Write(&lose, len);
-            sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+                sock->Write(&len, 1);
+                sock->Write(&lose, len);
+                sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+                comm->server_on = true;
+            }
 
 
-            comm->server_on = true;
+
             comm->Setbusy(true);
-            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("You Lose")));
+            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose"), comm->UserName));
             comm->CloseConnection();
             //panel->Destroy();
         }

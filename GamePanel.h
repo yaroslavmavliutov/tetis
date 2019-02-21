@@ -49,6 +49,7 @@ public:
     /* wx event handlers */
     void setNextPiece(char c);
     void setCurrentPiece(char c);
+    void SetMovement(char c);
 
 protected:
     void OnPaint(wxPaintEvent& event);
