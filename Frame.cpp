@@ -1,5 +1,6 @@
 #include "Frame.h"
 #include "StartDialog.h"
+#include "SelectOpponentsPanel.h"
 
 using namespace std;
 
@@ -235,20 +236,24 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
 
     }
 
-    want_players = 2;
+    //want_players = 2;
+    SelectOpponentsPanel *paneloppon = new SelectOpponentsPanel(wxT("OpponDialog"));
+    paneloppon->Show(true);
+    want_players = paneloppon->GetCountOpponents();
 
-    if (!server_on){
+    if (!server_on and want_players != 0){
         Server *my_server = new Server(wxT("Server"), want_players);
         my_server->Show(true);
+
+        ClientSocket();
+        OpenConnection();
+
+        std::cout << "SERVER waiting for players" << std::endl;
+    } else {
+        file->Enable(ID_PLAY, true);
+        file->Enable(ID_CREATE_GAME, true);
+        file->Enable(ID_JOIN_GAME, true);
     }
-
-
-    ClientSocket();
-    OpenConnection();
-
-
-    std::cout << "SERVER waiting for players" << std::endl;
-
 }
 
 

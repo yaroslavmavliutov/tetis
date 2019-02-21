@@ -433,7 +433,6 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
             sock->Write(&move, len);
         }
 
-
     }
 }
 

@@ -10,9 +10,10 @@ class StartDialog : public wxDialog
 {
 public:
     StartDialog(const wxString& title);
-
-    void Verification(wxCommandEvent& event);
     std::string GetName();
+
+private:
+    void Verification(wxCommandEvent& event);
 
     wxTextCtrl *input_name;
     wxString name;
