@@ -145,27 +145,23 @@ void Frame::OpenConnection()
 
     sock->Connect(addr, false);
 
-//    char login[] = "start";
-//    start[5] = static_cast<char>(48+numClients);
-//    size_t txn = strlen(start);
-//
-//    unsigned char len;
-//    len = txn;
-//
-//    wxSocketBase *sockBase_curr_2;
-//    for(auto it = clients.begin(); it != clients.end(); ++it){
-//        sockBase_curr_2 = *it;
-//        sockBase_curr_2->Write(&len,1);
-//        sockBase_curr_2->Write(&start, len);
-//        txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), start));
-//        std::cout << "send start_MSG:  " << start << "\n";
-//         Enable input events again.
-//        sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-//
-//    }
-
     //update status
     UpdateStatusBar();
+}
+
+void Frame::sendLogin(){
+    char login[12] = "login";
+    strcat(login, BufferName);
+    size_t txn = strlen(login);
+
+    unsigned char len;
+    len = txn;
+
+    sock->Write(&len,1);
+    sock->Write(&login, len);
+    std::cout << "login_MSG:  " << login << "\n";
+
+    //sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 }
 
 
@@ -232,10 +228,12 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
 
     }
 
-    //want_players = 2;
-    SelectOpponentsPanel *paneloppon = new SelectOpponentsPanel(wxT("OpponDialog"));
-    paneloppon->Show(true);
-    want_players = paneloppon->GetCountOpponents();
+//    want_players = 2;
+    SelectOpponentsPanel *setWantPlayersPanel = new SelectOpponentsPanel(wxT("OpponDialog"));
+
+    setWantPlayersPanel->Show(true);
+    want_players = setWantPlayersPanel->GetCountOpponents();
+    std::cout << "Want_player -> " << want_players << std::endl;
 
     if (!server_on and want_players != 0){
         Server *my_server = new Server(wxT("Server"), want_players);
@@ -243,7 +241,8 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
 
         ClientSocket();
         OpenConnection();
-
+//        wxSleep(1);
+//        sendLogin();
         std::cout << "SERVER waiting for players" << std::endl;
     } else {
         file->Enable(ID_PLAY, true);
@@ -274,6 +273,8 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
     ClientSocket();
     OpenConnection();
+//    wxSleep(1);
+//    sendLogin();
     std::cout<<"CLIENT waiting for all players" << std::endl;
 
 }
@@ -281,8 +282,8 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
 void Frame::StartPanels(int N) {
 
-    opPanel = new Opponents(wxT("Opponents"), 1);
-    opPanel->Show(true);
+//    opPanel = new Opponents(wxT("Opponents"), 1);
+//    opPanel->Show(true);
 
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
@@ -363,48 +364,74 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             }
 
             // обробка повідомлення з сервера
+            if(strncmp( buf, "conn", (size_t) 4 )==0){
+                sendLogin();
+            }else if (strncmp( buf, "start", (size_t) 5 )==0){
 
-            if (strncmp( buf, "start", (size_t) 5 )==0){
-//             запустити груу!!!!
                 std::string mystr(buf);
                 int n = mystr[5] - '0';//std::stoi(std::to_string((int) mystr[5]));
-                std::cout << "LETS START THE GAME! with " << n << " players" << std::endl;
 
+                //зчитати логіни
+                int tmp;
+                tmp = 5+n+1;
+                for(int i=0; i < n; i++ ){
+
+                    lenlogins[i] = buf[6+i]-'0';
+                    std::cout << "login n -> " << lenlogins[i]  << std::endl;
+                    opponentslog[i] = Server::substr(buf, tmp, lenlogins[i]);
+                    tmp = tmp + lenlogins[i];
+                    std::cout << "opponentslog[i] -> " << opponentslog[i]<< std::endl;
+                }
+
+//             запустити груу!!!!
+
+                std::cout << "LETS START THE GAME! with " << n << " players" << std::endl;
+                nb_op = n;
                 StartPanels(n-1); // 0 - це ти один , 1 ти і суперник
-            } else if (strncmp( buf, "lose", (size_t) 4 )==0){
+            }
+            else if (strncmp( buf, "lose", (size_t) 4 )==0){
 //                file->Enable(ID_PLAY, true);
 //                file->Enable(ID_CREATE_GAME, true);
 //                file->Enable(ID_JOIN_GAME, true);
 //                this->busy = true;
 //                CloseConnection();
                 std::cout << "Non start MSG";
-                m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Lose")));
+//                m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Lose")));
+
+                for(int i = 0; i<nb_op; i++){
+                    if(strncmp( Server::substr(buf, 4, lenlogins[i]), opponentslog[i], (size_t) lenlogins[i] )==0) {
+                        score = std::stoi( Server::substr(buf, (4+lenlogins[i]), (len - 4 - lenlogins[i])) );
+                        m_rp->strings_score[i]->SetLabel(wxString::Format(wxT("%s lose final score: %d"), opponentslog[i], score));
+                        break;
+                    }
+                }
 
             }else if (strncmp( buf, "move", (size_t) 4 )==0){
                 std::cout << "MOVE      -> " << buf << std::endl;
                 std::cout << "END       -> " << buf[4] << std::endl;
-                opPanel->m_lp->SetMovement(buf[4]);
+//                opPanel->m_lp->SetMovement(buf[4]);
             }else if(strncmp( buf, "next", (size_t) 4 )==0){
                 std::cout << "NEXT fig      -> " << buf[4] << std::endl;
-                opPanel->m_lp->setNextPiece(buf[4]);
+//                opPanel->m_lp->setNextPiece(buf[4]);
             }
             else if(strncmp( buf, "curr", (size_t) 4 )==0){
                 std::cout << "CURR fig      -> " << buf[4] << std::endl;
-                opPanel->m_lp->setCurrentPiece(buf[4]);
+//                opPanel->m_lp->setCurrentPiece(buf[4]);
             }
-            else
+            else if(strncmp( buf, "score", (size_t) 5 )==0)
             {
                 std::cout << "Non start MSG";
-                score = std::stoi( buf );
-                m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Score: %d"), score));
+
+                for(int i = 0; i<nb_op; i++){
+                    if(strncmp( Server::substr(buf, 5, lenlogins[i]), opponentslog[i], (size_t) lenlogins[i] )==0) {
+                        score = std::stoi( Server::substr(buf, (5+lenlogins[i]), (len - 5 - lenlogins[i])) );
+                        m_rp->strings_score[i]->SetLabel(wxString::Format(wxT("%s score: %d"), opponentslog[i], score));
+                        break;
+                    }
+                }
+
             }
 
-
-
-//            score = std::stoi( buf );
-//            m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Server Score: %d"), score));
-
-            //std::cout<< "Rx: " <<  wxString::FromUTF8(buf, len) << std::endl;
             // Enable input events again.
             sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
             break;
@@ -418,6 +445,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
     //update status
     UpdateStatusBar();
 }
+
 
 void Frame::UpdateStatusBar()
 {

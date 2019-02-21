@@ -373,18 +373,24 @@ void GamePanel::RemoveFullLines()
         comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s score: %d"), comm->UserName, score));
 
         if (nb_opponent > 0) {
-            wxString str1 = std::to_string(score);
-            wxCharBuffer buffer = str1.ToUTF8();
-            size_t txn = str1.length();
+            char score_char[15] = "score";
+            std::string sc = std::to_string(score);
+            char const *pscore = sc.c_str();
+            strcat(score_char, comm->BufferName);
+            strcat(score_char, pscore);
+
+//            wxString str1 = std::to_string(score);
+//            wxCharBuffer buffer = str1.ToUTF8();
+            size_t txn = strlen(score_char);
             std::cout << "GAME_PANAL txn = " << txn << std::endl;
             unsigned char len;
             len = txn;
             sock->Write(&len, 1);//send the length of the message first
-            if (sock->Write(buffer.data(), txn).LastCount() != txn) {
+            if (sock->Write(score_char, txn).LastCount() != txn) {
                 std::cout << "Write error.\n";
                 return;
             } else {
-                std::cout << "CLIENT send score Tx: " << str1 << "\n";
+                std::cout << "CLIENT send score Tx: " << score_char << "\n";
             }
         }
     }
@@ -498,7 +504,12 @@ void GamePanel::MakeNewPiece()
             comm->file->Enable(ID_JOIN_GAME, true);
             //write Lose MSG
             if(nb_opponent>0){
-                char lose[5] = "lose";
+                char lose[12] = "lose";
+                std::string sc = std::to_string(score);
+                char const *pscore = sc.c_str();
+                strcat(lose, comm->BufferName);
+                strcat(lose, pscore);
+
                 size_t txn = strlen(lose);
                 unsigned char len;
                 len = txn;
@@ -513,7 +524,7 @@ void GamePanel::MakeNewPiece()
 
             comm->Setbusy(true);
             comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose"), comm->UserName));
-            comm->CloseConnection();
+            //comm->CloseConnection();
             //panel->Destroy();
         }
     }

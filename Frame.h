@@ -48,6 +48,10 @@ public:
 
     // convenience functions
     void UpdateStatusBar();
+    void sendLogin();
+    char *opponentslog [3];
+    int lenlogins[3];
+    int nb_op;
 //-----------------------------------------------------------------------------------------
     GamePanel *m_lp;
     InfoPanel *m_rp;
