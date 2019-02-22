@@ -45,11 +45,11 @@ SelectOpponentsPanel::SelectOpponentsPanel(const wxString & title)
 
 void SelectOpponentsPanel::Verification(wxCommandEvent& WXUNUSED(event))
 {
-    if (this->chice1) {
+    if (this->chice1->GetValue()) {
         this->count_of_opponents = 2;
         Destroy();
     }
-    else if (this->chice2) {
+    else if (this->chice2->GetValue()) {
         this->count_of_opponents = 3;
         Destroy();
     }
