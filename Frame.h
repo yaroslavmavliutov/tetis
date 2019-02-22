@@ -52,6 +52,7 @@ public:
     char *opponentslog [3];
     int lenlogins[3];
     int nb_op;
+    int index; // для правильного розташування панельок
 //-----------------------------------------------------------------------------------------
     GamePanel *m_lp;
     InfoPanel *m_rp;

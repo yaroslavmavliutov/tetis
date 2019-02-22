@@ -15,9 +15,11 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, int nb_opponent)
 
 //    *strings_score = new wxStaticText[nb_opponent+1];
     Frame *comm = (Frame *) panel->GetParent();
-
+    int pos;
+    //strings_score[0] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), comm->BufferName), wxPoint(110, (190 + 0*10)));
     for (int i = 0 ; i < nb_opponent+1; i++){
-        strings_score[i] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), comm->UserName), wxPoint(110, (190 + i*10)));
+        if(i<comm->index){ pos = i+1;}else if (i==comm->index){pos = 0;}else{pos = i;}
+        strings_score[pos] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), comm->opponentslog[i]), wxPoint(110, (190 + pos*10)));
     }
 
 

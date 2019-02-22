@@ -523,7 +523,7 @@ void GamePanel::MakeNewPiece()
 
 
             comm->Setbusy(true);
-            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose"), comm->UserName));
+            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
             //comm->CloseConnection();
             //panel->Destroy();
         }
