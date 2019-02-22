@@ -52,6 +52,7 @@ public:
     char *opponentslog [3];
     int lenlogins[3];
     int nb_op;
+    int index; // для правильного розташування панельок
 //-----------------------------------------------------------------------------------------
     GamePanel *m_lp;
     InfoPanel *m_rp;
@@ -63,6 +64,8 @@ public:
     void OnJoin(wxCommandEvent & event);
     void OnPlay(wxCommandEvent & event);
 
+    void ShowMessageLose();
+    void ShowMessageWin();
 
     void Setbusy(bool);
 
@@ -90,6 +93,8 @@ const int ID_JOIN = 112;
 const int ID_CREATE_GAME = 115;
 const int ID_JOIN_GAME = 118;
 const int ID_PLAY = 113;
+
+const int ID_INFO = 1;
 
 // IDs for the controls and the menu commands
 enum

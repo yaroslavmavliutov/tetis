@@ -56,7 +56,7 @@ Frame::Frame(const wxString& title)
     strcpy(BufferName, UserName.c_str());
 
     m_text  = new wxTextCtrl(this, -1,
-                             wxString::Format(wxT("Your login: %s "), UserName),
+                             wxString::Format(wxT("Start page !\n Hello: %s \n You can start the game in menu!"), UserName),
                              wxDefaultPosition, wxDefaultSize,
                              wxTE_MULTILINE | wxTE_READONLY);
 
@@ -170,9 +170,7 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     file->Enable(ID_PLAY, false);
     file->Enable(ID_CREATE_GAME, false);
     file->Enable(ID_JOIN_GAME, false);
-
     if (this->busy) {
-
         m_lp->Destroy();
         m_rp->Destroy();
 
@@ -182,22 +180,15 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
         statusScore = CreateStatusBar(3);
     }
 
-
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
     hbox = new wxBoxSizer(wxHORIZONTAL);
+    m_lp = new GamePanel(m_parent, fr, sock, 0); // 0 - opponents
 
-    m_lp = new GamePanel(m_parent, this, sock, 0); // 0 - opponents
-    /*std::map<std::string, int> my_map = {
-            { "A", 1 },
-            { "B", 2 },
-            { "C", 3 }
-    };*/
-    m_rp = new InfoPanel(m_parent, this, 0); // 0 - opponents
+    m_rp = new InfoPanel(m_parent, fr, 0); // 0 - opponents
     //Start tetris
     m_lp->SetFocus();
     m_lp->Start();
-
     srand(time(NULL));
 
     hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
@@ -230,24 +221,23 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
 
 //    want_players = 2;
     SelectOpponentsPanel *setWantPlayersPanel = new SelectOpponentsPanel(wxT("OpponDialog"));
-
+//
     setWantPlayersPanel->Show(true);
     want_players = setWantPlayersPanel->GetCountOpponents();
     std::cout << "Want_player -> " << want_players << std::endl;
 
-    if (!server_on and want_players != 0){
-        Server *my_server = new Server(wxT("Server"), want_players);
-        my_server->Show(true);
-
+    if(want_players != 0 ){
+        if (!server_on) {
+            Server *my_server = new Server(wxT("Server"), want_players);
+            my_server->Show(true);
+        }
         ClientSocket();
         OpenConnection();
-//        wxSleep(1);
-//        sendLogin();
         std::cout << "SERVER waiting for players" << std::endl;
-    } else {
-        file->Enable(ID_PLAY, true);
-        file->Enable(ID_CREATE_GAME, true);
-        file->Enable(ID_JOIN_GAME, true);
+    }else {
+    file->Enable(ID_PLAY, true);
+    file->Enable(ID_CREATE_GAME, true);
+    file->Enable(ID_JOIN_GAME, true);
     }
 }
 
@@ -273,8 +263,7 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
     ClientSocket();
     OpenConnection();
-//    wxSleep(1);
-//    sendLogin();
+
     std::cout<<"CLIENT waiting for all players" << std::endl;
 
 }
@@ -282,8 +271,8 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
 void Frame::StartPanels(int N) {
 
-//    opPanel = new Opponents(wxT("Opponents"), 1);
-//    opPanel->Show(true);
+    opPanel = new Opponents(wxT("Opponents"), N);
+    opPanel->Show(true);
 
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
@@ -357,7 +346,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             wxUint32 lenRd = sockBase->Read(buf, len).LastCount();
             if (!lenRd) {
                 std::cout<< "Failed to read message." << std::endl;
-//                return;
+                return;
             }
             else {
                 std::cout<< "CLIENT Read  -> " <<lenRd <<" bytes."  << std::endl;
@@ -381,6 +370,9 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                     opponentslog[i] = Server::substr(buf, tmp, lenlogins[i]);
                     tmp = tmp + lenlogins[i];
                     std::cout << "opponentslog[i] -> " << opponentslog[i]<< std::endl;
+                    if(strncmp(opponentslog[i], BufferName, (size_t) strlen(BufferName) )==0){
+                        index = i;
+                    }
                 }
 
 //             запустити груу!!!!
@@ -390,42 +382,62 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                 StartPanels(n-1); // 0 - це ти один , 1 ти і суперник
             }
             else if (strncmp( buf, "lose", (size_t) 4 )==0){
-//                file->Enable(ID_PLAY, true);
-//                file->Enable(ID_CREATE_GAME, true);
-//                file->Enable(ID_JOIN_GAME, true);
-//                this->busy = true;
-//                CloseConnection();
                 std::cout << "Non start MSG";
-//                m_rp->strings_score[1]->SetLabel(wxString::Format(wxT("Opponent Lose")));
-
+                int pos;
                 for(int i = 0; i<nb_op; i++){
                     if(strncmp( Server::substr(buf, 4, lenlogins[i]), opponentslog[i], (size_t) lenlogins[i] )==0) {
                         score = std::stoi( Server::substr(buf, (4+lenlogins[i]), (len - 4 - lenlogins[i])) );
-                        m_rp->strings_score[i]->SetLabel(wxString::Format(wxT("%s lose final score: %d"), opponentslog[i], score));
+                        if(i<index){
+                            pos = i+1;
+                        }else
+                        {
+                            pos = i;
+                        }
+                        m_rp->strings_score[pos]->SetLabel(wxString::Format(wxT("%s lose final score: %d"), opponentslog[i], score));
                         break;
                     }
                 }
 
+            }else if(strncmp( buf, "gameover", (size_t) 8 )==0){
+                //
+                int tmp = len - 8;
+                std::cout<<"GAMEOVER MSG-> "<<buf << " lenlog->"<< tmp <<std::endl;
+                if(strncmp( Server::substr(buf, 8, tmp), BufferName, (size_t) strlen(BufferName) )==0){
+                    ShowMessageWin();
+                }else{
+                    ShowMessageLose();
+                }
+                CloseConnection();
+                file->Enable(ID_CREATE_GAME, true);
+                file->Enable(ID_JOIN_GAME, true);
+
+
             }else if (strncmp( buf, "move", (size_t) 4 )==0){
                 std::cout << "MOVE      -> " << buf << std::endl;
                 std::cout << "END       -> " << buf[4] << std::endl;
-//                opPanel->m_lp->SetMovement(buf[4]);
+                opPanel->m_lp->SetMovement(buf[4]);
             }else if(strncmp( buf, "next", (size_t) 4 )==0){
                 std::cout << "NEXT fig      -> " << buf[4] << std::endl;
-//                opPanel->m_lp->setNextPiece(buf[4]);
+                opPanel->m_lp->setNextPiece(buf[4]);
             }
             else if(strncmp( buf, "curr", (size_t) 4 )==0){
                 std::cout << "CURR fig      -> " << buf[4] << std::endl;
-//                opPanel->m_lp->setCurrentPiece(buf[4]);
+                opPanel->m_lp->setCurrentPiece(buf[4]);
             }
             else if(strncmp( buf, "score", (size_t) 5 )==0)
             {
                 std::cout << "Non start MSG";
-
+                int pos;
                 for(int i = 0; i<nb_op; i++){
                     if(strncmp( Server::substr(buf, 5, lenlogins[i]), opponentslog[i], (size_t) lenlogins[i] )==0) {
                         score = std::stoi( Server::substr(buf, (5+lenlogins[i]), (len - 5 - lenlogins[i])) );
-                        m_rp->strings_score[i]->SetLabel(wxString::Format(wxT("%s score: %d"), opponentslog[i], score));
+                        if(i<index){
+                            pos = i+1;
+                        }else
+                        {
+                            pos = i;
+                        }
+                        m_rp->strings_score[pos]->SetLabel(wxString::Format(wxT("%s score: %d"), opponentslog[i], score));
                         break;
                     }
                 }
@@ -457,3 +469,19 @@ void Frame::UpdateStatusBar()
         SetStatusText(wxString::Format(wxT("Not connected")), 2);
     }
 }
+
+void Frame::ShowMessageWin()
+{
+    wxMessageDialog *dial = new wxMessageDialog(NULL,
+                                                wxT("You win this game!!"), wxT("Congratulation"), wxOK);
+    dial->ShowModal();
+}
+
+
+void Frame::ShowMessageLose()
+{
+    wxMessageDialog *dial = new wxMessageDialog(NULL,
+                                                wxT("You lose this game!!"), wxT("Congratulation"), wxOK);
+    dial->ShowModal();
+}
+

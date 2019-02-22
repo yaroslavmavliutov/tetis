@@ -36,8 +36,8 @@ class Server: public wxFrame
     wxSocketServer *sock;
     wxTextCtrl *txtRx;
     int numClients;
-    int clients_in_game;
     int want_players;
+    int losers;
     // any class wishing to process wxWidgets events must use this macro
     wxDECLARE_EVENT_TABLE();
 };

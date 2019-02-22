@@ -38,6 +38,7 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
 {
+    first = true;
     special = false;
     sock = m_sock;
     timer = new wxTimer(this, 1);
@@ -51,15 +52,15 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int
     curY = 0;
     panel = parent_t;
     TIMER_INTERVAL = 500;
+    nb_opponent = m_nb_opponent;
 
     PieceShape tmp;
     tmp = PieceShape(rand()%7+1);
-    if(nb_opponent>0) {
-        sendShapeToServer(tmp, 1);
-    }
+//    if(nb_opponent>0) {
+//        sendShapeToServer(tmp, 1);
+//    }
     next.SetShape(tmp);
 
-    nb_opponent = m_nb_opponent;
     //current.SetShape(PieceShape(rand()%7+1));
 
     //RandomPiece(); - цю треба тут, але з нею виходить переповнення
@@ -464,8 +465,9 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
 void GamePanel::RandomPiece()
 {
 
-        current.SetShape(next.GetShape());
-//        sendShapeToServer(current.GetShape(), 0);
+    current.SetShape(next.GetShape());
+    if(nb_opponent>0)
+        sendShapeToServer(current.GetShape(), 0);
 
     if (!special) {
         PieceShape tmp;
@@ -485,23 +487,22 @@ void GamePanel::RandomPiece()
 
 void GamePanel::MakeNewPiece()
 {
-    RandomPiece();
-    curX = BoardWidth / 2;
-    curY = BoardHeight - 1 + current.MinY();
 
-    if (!DoMove(current, curX, curY))
-    {
-        current.SetShape(None);
-        if(nb_opponent>0)
-            sendShapeToServer(None, 0);
-        timer->Stop();
-        started = false;
-        status_scr->SetStatusText(wxT("You Lose :("));
-        if(!special) {
+        RandomPiece();
+        curX = BoardWidth / 2;
+        curY = BoardHeight - 1 + current.MinY();
+
+        if (!DoMove(current, curX, curY))
+        {
+            current.SetShape(None);
+            if(nb_opponent>0)
+                sendShapeToServer(None, 0);
+            timer->Stop();
+            started = false;
+            status_scr->SetStatusText(wxT("You Lose :("));
+            if(!special){
             Frame *comm = (Frame *) panel->GetParent();
             comm->file->Enable(ID_PLAY, true);
-            comm->file->Enable(ID_CREATE_GAME, true);
-            comm->file->Enable(ID_JOIN_GAME, true);
             //write Lose MSG
             if(nb_opponent>0){
                 char lose[12] = "lose";
@@ -520,12 +521,12 @@ void GamePanel::MakeNewPiece()
                 comm->server_on = true;
             }
 
-
-
             comm->Setbusy(true);
-            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose"), comm->UserName));
-            //comm->CloseConnection();
-            //panel->Destroy();
+            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
+            if(nb_opponent==0){
+                comm->file->Enable(ID_CREATE_GAME, true);
+                comm->file->Enable(ID_JOIN_GAME, true);
+            }
         }
     }
 }

@@ -13,11 +13,20 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, int nb_opponent)
     sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 40), wxSize(305,1));
     sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 170), wxSize(305,1));
 
-//    *strings_score = new wxStaticText[nb_opponent+1];
     Frame *comm = (Frame *) panel->GetParent();
-
+    int pos;
+    char *user;
     for (int i = 0 ; i < nb_opponent+1; i++){
-        strings_score[i] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), comm->UserName), wxPoint(110, (190 + i*10)));
+        if(i<comm->index){
+            pos = i+1;
+            user = comm->opponentslog[i];
+        }else if (i==comm->index){
+            pos = 0;
+            user = comm->BufferName;
+        }else{
+            pos = i;
+            user = comm->BufferName;}
+        strings_score[pos] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), user), wxPoint(110, (190 + pos*10)));
     }
 
 
@@ -62,9 +71,4 @@ void InfoPanel::ClearPeace() {
     }
 }
 
-
-//void InfoPanel::DrawOpponents(std::string Name, int score) {
-//
-//    this->string_score = new wxStaticText(this, -1, wxString::Format(wxT("Your Score: %d"), score), wxPoint(110, 190));
-//}
 
