@@ -23,7 +23,7 @@ Opponents::Opponents(const wxString& title, int nb_opponents)
     std::cout<<"ICI 1" << std::endl;
     srand(time(NULL));
 
-    hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
+    hbox->Add(m_lp, 1, wxSHAPED | wxALL, 5);
 
 
     m_parent->SetSizer(hbox);

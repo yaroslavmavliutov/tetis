@@ -13,7 +13,6 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, int nb_opponent)
     sl1 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 40), wxSize(305,1));
     sl2 = new wxStaticLine(this, wxID_ANY, wxPoint(0, 170), wxSize(305,1));
 
-//    *strings_score = new wxStaticText[nb_opponent+1];
     Frame *comm = (Frame *) panel->GetParent();
     int pos;
     char *user;

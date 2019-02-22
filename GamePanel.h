@@ -50,6 +50,7 @@ public:
     void setNextPiece(char c);
     void setCurrentPiece(char c);
     void SetMovement(char c);
+    bool first;
 
 protected:
     void OnPaint(wxPaintEvent& event);
