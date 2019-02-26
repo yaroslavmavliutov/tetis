@@ -1,6 +1,7 @@
 #include "Frame.h"
 #include "StartDialog.h"
 #include "SelectOpponentsPanel.h"
+#include "GamePanelOpponent.h"
 
 using namespace std;
 
@@ -183,9 +184,10 @@ void Frame::OnPlay(wxCommandEvent& WXUNUSED(event)) {
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
     hbox = new wxBoxSizer(wxHORIZONTAL);
+    m_rp = new InfoPanel(m_parent, fr, 0); // 0 - opponents
     m_lp = new GamePanel(m_parent, fr, sock, 0); // 0 - opponents
 
-    m_rp = new InfoPanel(m_parent, fr, 0); // 0 - opponents
+
     //Start tetris
     m_lp->SetFocus();
     m_lp->Start();
@@ -279,9 +281,10 @@ void Frame::StartPanels(int N) {
     hbox = new wxBoxSizer(wxHORIZONTAL);
 
     std::cout<<"N -> "<< N <<std::endl;
+    m_rp = new InfoPanel(m_parent, fr, N); // 0 - opponents
     m_lp = new GamePanel(m_parent, fr, sock, N); // 0 - opponents
 
-    m_rp = new InfoPanel(m_parent, fr, N); // 0 - opponents
+
     //Start tetris
 
     m_lp->SetFocus();

@@ -5,7 +5,7 @@
 #include "Opponents.h"
 
 Opponents::Opponents(const wxString& title, int nb_opponents)
-        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(500, 400))
+        : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(250, 400))
 {
 
     opp = this;
@@ -15,11 +15,11 @@ Opponents::Opponents(const wxString& title, int nb_opponents)
 
     hbox = new wxBoxSizer(wxHORIZONTAL);
 
-    m_lp = new GamePanel(m_parent, opp); // 0 - opponents
+    m_lp = new GamePanelOpponent(m_parent, opp); // 0 - opponents
     std::cout<<"ICI" << std::endl;
     //Start tetris
     m_lp->SetFocus();
-    m_lp->Start();
+//    m_lp->Start();
     std::cout<<"ICI 1" << std::endl;
     srand(time(NULL));
 
