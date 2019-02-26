@@ -102,14 +102,15 @@ void GamePanelOpponent::DropDown()
     while (y)
         if (!DoMove(current, curX, --y))
             break;
-    PieceDropped();
+    //PieceDropped();
 }
 
 void GamePanelOpponent::DropOneLine()
 {
     if (!DoMove(current, curX, curY - 1))
-        PieceDropped();
-    //RemoveFullLines();
+    {}
+//        PieceDropped();
+    RemoveFullLines();
 }
 
 void GamePanelOpponent::PieceDropped()
@@ -189,7 +190,7 @@ bool GamePanelOpponent::DoMove(const Piece& piece, int newX, int newY)
     curX = newX;
     curY = newY;
 
-//    Refresh();
+    Refresh();
 
     return true;
 }
@@ -303,6 +304,9 @@ void GamePanelOpponent::SetMovement(char c) {
             break;
         case 'p':
             OnPaint();
+            break;
+        case 'x':
+            PieceDropped();
             break;
         default:
             //event.Skip();

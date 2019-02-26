@@ -236,6 +236,7 @@ void GamePanel::DropOneLine()
 
 void GamePanel::PieceDropped()
 {
+    sendMoveToServer('x');
     for (int i = 0; i < 4; i++)
     {
         int x = curX + current.x(i);
@@ -354,8 +355,8 @@ void GamePanel::MakeNewPiece()
     if (!DoMove(current, curX, curY))
     {
         current.SetShape(None);
-        if(nb_opponent>0)
-            sendShapeToServer(None, 0);
+//        if(nb_opponent>0)
+//            sendShapeToServer(None, 0);
         timer->Stop();
         started = false;
         status_scr->SetStatusText(wxT("You Lose :("));
