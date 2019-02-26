@@ -221,7 +221,6 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
 
     }
 
-//    want_players = 2;
     SelectOpponentsPanel *setWantPlayersPanel = new SelectOpponentsPanel(wxT("OpponDialog"));
 //
     setWantPlayersPanel->Show(true);
@@ -273,8 +272,10 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
 void Frame::StartPanels(int N) {
 
-    opPanel = new Opponents(wxT("Opponents"), N);
-    opPanel->Show(true);
+    if (want_players == 2) {
+        opPanel = new Opponents(wxT("Opponents"), N);
+        opPanel->Show(true);
+    }
 
     statusScore->SetStatusText(wxT("Your lvl: 1"));
 
@@ -418,14 +419,17 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             }else if (strncmp( buf, "move", (size_t) 4 )==0){
                 std::cout << "MOVE      -> " << buf << std::endl;
                 std::cout << "END       -> " << buf[4] << std::endl;
-                opPanel->m_lp->SetMovement(buf[4]);
+                if(want_players == 2)
+                    opPanel->m_lp->SetMovement(buf[4]);
             }else if(strncmp( buf, "next", (size_t) 4 )==0){
                 std::cout << "NEXT fig      -> " << buf[4] << std::endl;
-                opPanel->m_lp->setNextPiece(buf[4]);
+                if(want_players == 2)
+                    opPanel->m_lp->setNextPiece(buf[4]);
             }
             else if(strncmp( buf, "curr", (size_t) 4 )==0){
                 std::cout << "CURR fig      -> " << buf[4] << std::endl;
-                opPanel->m_lp->setCurrentPiece(buf[4]);
+                if(want_players == 2)
+                    opPanel->m_lp->setCurrentPiece(buf[4]);
             }
             else if(strncmp( buf, "score", (size_t) 5 )==0)
             {

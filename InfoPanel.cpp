@@ -25,7 +25,7 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, int nb_opponent)
             user = comm->BufferName;
         }else{
             pos = i;
-            user = comm->BufferName;}
+            user = comm->opponentslog[i];}
         strings_score[pos] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), user), wxPoint(110, (190 + pos*10)));
     }
 

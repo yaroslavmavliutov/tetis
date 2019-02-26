@@ -5,37 +5,6 @@
 #include <chrono>
 
 
-/*
-GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr)
-        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
-{
-//    sock = m_sock;
-    special = true;
-    timer = new wxTimer(this, 1);
-    status_scr = fr->GetStatusBar();
-    pieceFallingFinished = false;
-    started = false;
-    paused = false;
-    score = 0;
-    lvl = 2;
-
-    curX = 0;
-    curY = 1;
-    panel = parent_t;
-    TIMER_INTERVAL = 490;
-    //next.SetShape(PieceShape(rand()%7+1));
-//    nb_opponent = m_nb_opponent;
-    //current.SetShape(PieceShape(rand()%7+1));
-
-    //RandomPiece(); - цю треба тут, але з нею виходить переповнення
-    ClearBoard();
-
-    Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
-//    Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GamePanel::OnKeyDown));
-    Connect(wxEVT_TIMER, wxCommandEventHandler(GamePanel::OnTimer));
-    std::cout << "GamePanel - constructor vide" << std::endl;
-}
-*/
 
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
@@ -58,28 +27,13 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int
 
     PieceShape tmp;
     tmp = PieceShape(rand()%7+1);
-//    if(nb_opponent>0) {
-//        sendShapeToServer(tmp, 1);
-//    }
     next.SetShape(tmp);
-
-//    Frame *comm = (Frame *) panel->GetParent();
-//
-//    comm->m_rp->piece.SetShape(None);
-//    comm->m_rp->ClearPeace();
-//
-//    comm->m_rp->piece.SetShape(next.GetShape());
-//    comm->m_rp->ChangePeace();
-
-//    current.SetShape(PieceShape(rand()%7+1));
-
-//    RandomPiece(); //- цю треба тут, але з нею виходить переповнення
     ClearBoard();
 
     Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
     Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GamePanel::OnKeyDown));
     Connect(wxEVT_TIMER, wxCommandEventHandler(GamePanel::OnTimer));
-    std::cout << "GamePanel - constructor" << std::endl;
+//    std::cout << "GamePanel - constructor" << std::endl;
 }
 
 void GamePanel::Start()
@@ -92,12 +46,9 @@ void GamePanel::Start()
     paused = false;
     lvl = 1;
 
-
     status_scr->SetStatusText(wxT("Your lvl: 1"));
     MakeNewPiece();
     timer->Start(this->TIMER_INTERVAL);
-
-
 }
 
 void GamePanel::Pause()
@@ -124,7 +75,8 @@ void GamePanel::Pause()
 
 void GamePanel::OnPaint(wxPaintEvent& event)
 {
-    sendMoveToServer('p');
+    if(nb_opponent==1)
+        sendMoveToServer('p');
 
     wxPaintDC dc(this);
 
@@ -156,12 +108,15 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
 {
     int keyCode = event.GetKeyCode();
 
-    switch (keyCode)
-    {
-        case 'P':
-            Pause();
-            return;
+    if(nb_opponent == 0){
+        switch (keyCode)
+        {
+            case 'P':
+                Pause();
+                return;
+        }
     }
+
 
     if (!started || current.GetShape() == None || paused)
     {
@@ -208,9 +163,11 @@ void GamePanel::OnTimer(wxCommandEvent& event)
         pieceFallingFinished = false;
         MakeNewPiece();
     }
-    else
+    else {
         DropOneLine();
-        sendMoveToServer('o');
+        if (nb_opponent == 1)
+            sendMoveToServer('o');
+    }
 }
 
 void GamePanel::ClearBoard()
@@ -236,7 +193,8 @@ void GamePanel::DropOneLine()
 
 void GamePanel::PieceDropped()
 {
-    sendMoveToServer('x');
+    if(nb_opponent==1)
+        sendMoveToServer('x');
     for (int i = 0; i < 4; i++)
     {
         int x = curX + current.x(i);
@@ -296,10 +254,8 @@ void GamePanel::RemoveFullLines()
             strcat(score_char, comm->BufferName);
             strcat(score_char, pscore);
 
-//            wxString str1 = std::to_string(score);
-//            wxCharBuffer buffer = str1.ToUTF8();
             size_t txn = strlen(score_char);
-            std::cout << "GAME_PANAL txn = " << txn << std::endl;
+            //std::cout << "GAME_PANAL txn = " << txn << std::endl;
             unsigned char len;
             len = txn;
             sock->Write(&len, 1);//send the length of the message first
@@ -307,7 +263,7 @@ void GamePanel::RemoveFullLines()
                 std::cout << "Write error.\n";
                 return;
             } else {
-                std::cout << "CLIENT send score Tx: " << score_char << "\n";
+              //  std::cout << "CLIENT send score Tx: " << score_char << "\n";
             }
         }
     }
@@ -326,20 +282,19 @@ void GamePanel::RandomPiece()
 {
 
     current.SetShape(next.GetShape());
-    if(nb_opponent>0)
+    if(nb_opponent==1)
         sendShapeToServer(current.GetShape(), 0);
 
 
     PieceShape tmp;
     tmp = PieceShape(rand() % 7 + 1);
-    if(nb_opponent>0)
+    if(nb_opponent==1)
         sendShapeToServer(tmp, 1);
     next.SetShape(tmp);
-    Frame *comm = (Frame *) panel->GetParent();
 
+    Frame *comm = (Frame *) panel->GetParent();
     comm->m_rp->piece.SetShape(None);
     comm->m_rp->ClearPeace();
-
     comm->m_rp->piece.SetShape(next.GetShape());
     comm->m_rp->ChangePeace();
 
@@ -435,99 +390,12 @@ void GamePanel::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceSha
 }
 
 
-/*
-
-void GamePanel::setNextPiece(char c){
-    PieceShape ps;
-    switch (c)
-    {
-        case 'I':
-            ps = I_long;
-            break;
-        case 'O':
-            ps = O_bloc;
-            break;
-        case 'T':
-            ps = T;
-            break;
-        case 'L':
-            ps = L;
-            break;
-        case 'J':
-            ps = J;
-            break;
-        case 'Z':
-            ps = Z;
-            break;
-        case 'S':
-            ps = S;
-            break;
-        default:
-            ps = None;
-    }
-    next.SetShape(ps);
-}
-
-void GamePanel::setCurrentPiece(char c) {
-    PieceShape ps;
-    switch (c)
-    {
-        case 'I':
-            ps = I_long;
-            break;
-        case 'O':
-            ps = O_bloc;
-            break;
-        case 'T':
-            ps = T;
-            break;
-        case 'L':
-            ps = L;
-            break;
-        case 'J':
-            ps = J;
-            break;
-        case 'Z':
-            ps = Z;
-            break;
-        case 'S':
-            ps = S;
-            break;
-        default:
-            ps = None;
-    }
-    current.SetShape(ps);
-}
-
-void GamePanel::SetMovement(char c) {
-    switch (c) {
-        case 'd':
-            DropDown();
-            break;
-        case 'm':
-            DoMove(current.Rotation(), curX, curY);
-            break;
-        case 'o':
-            DropOneLine();
-            break;
-        case 'l':
-            DoMove(current, curX - 1, curY);
-            break;
-        case 'r':
-            DoMove(current, curX + 1, curY);
-            break;
-        default:
-            //event.Skip();
-            std::cout << "Non move value" << std::endl;
-    }
-}
- */
 
 void GamePanel::sendMoveToServer(char c) {
     unsigned char len;
     size_t txn;
     char move[5] = "move";
-    if(nb_opponent>0){
+    if(nb_opponent==1){
         move[4] = c;
         txn = strlen(move);
         len = txn;
@@ -543,7 +411,7 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
     char c;
 
 
-    if(nb_opponent>0){
+    if(nb_opponent==1){
         switch (ps)
         {
             case I_long:

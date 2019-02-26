@@ -102,14 +102,14 @@ void GamePanelOpponent::DropDown()
     while (y)
         if (!DoMove(current, curX, --y))
             break;
-    //PieceDropped();
+
 }
 
 void GamePanelOpponent::DropOneLine()
 {
     if (!DoMove(current, curX, curY - 1))
     {}
-//        PieceDropped();
+
     RemoveFullLines();
 }
 
@@ -158,7 +158,7 @@ void GamePanelOpponent::RemoveFullLines()
     lvl = score/500 + 1;
 //    this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*25;
     wxString str;
-    str.Printf(wxT("Your lvl: %d"), lvl);
+    str.Printf(wxT("Lvl: %d"), lvl);
     status_scr->SetStatusText(str);
 
 

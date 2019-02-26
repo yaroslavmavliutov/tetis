@@ -1,16 +1,10 @@
+Il faut installer biblio
 
-wx-config --list
-sudo apt-get purge wx3.1-headers                                                            // якшо дві версії
-sudo apt-get install wx2.8-headers libwxgtk2.8-0 libwxgtk2.8-dev                            // install wx2.8
-------------------------------------------------
-sudo apt-get install libsfml-dev                                                            // install sfml
 
 ________________________________________________________________________________________________________________________
-g++ `wx-config --cppflags` main.cpp Piece.cpp TetrisGame.cpp `wx-config --libs`
-./a.out
-АБО
 
-g++ -std=c++11 -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp Opponents.cpp SelectOpponentsPanel.cpp Server.cpp StartDialog.cpp `wx-config --libs`
 
-g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o Opponents.o SelectOpponentsPanel.o Server.o StartDialog.o `wx-config --libs`
+g++ -std=c++11 -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp Opponents.cpp SelectOpponentsPanel.cpp Server.cpp StartDialog.cpp GamePanelOpponent.cpp `wx-config --libs`
+
+g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o Opponents.o SelectOpponentsPanel.o Server.o StartDialog.o GamePanelOpponent.o `wx-config --libs`
 
