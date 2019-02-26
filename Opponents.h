@@ -7,6 +7,7 @@
 
 
 #include "GamePanel.h"
+#include "GamePanelOpponent.h"
 #include <wx/wxprec.h>
 #include "wx/wx.h"
 
@@ -28,7 +29,7 @@ public:
 
     void UpdateStatusBar();
 //-----------------------------------------------------------------------------------------
-    GamePanel *m_lp;
+    GamePanelOpponent *m_lp;
     wxPanel *m_parent;
     wxBoxSizer *hbox;
     wxStatusBar *statusScore;
