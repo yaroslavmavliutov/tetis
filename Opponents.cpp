@@ -11,24 +11,18 @@ Opponents::Opponents(const wxString& title, int nb_opponents)
     opp = this;
     m_parent = new wxPanel(this, wxID_ANY);
     statusScore = CreateStatusBar(3);
-    statusScore->SetStatusText(wxT("Your lvl: 1"));
+    statusScore->SetStatusText(wxT("Lvl: 1"));
 
     hbox = new wxBoxSizer(wxHORIZONTAL);
 
     m_lp = new GamePanelOpponent(m_parent, opp); // 0 - opponents
-    std::cout<<"ICI" << std::endl;
-    //Start tetris
-    m_lp->SetFocus();
-//    m_lp->Start();
-    std::cout<<"ICI 1" << std::endl;
-    srand(time(NULL));
 
+    m_lp->SetFocus();
+
+//    srand(time(NULL));
     hbox->Add(m_lp, 1, wxSHAPED | wxALL, 5);
 
-
     m_parent->SetSizer(hbox);
-    std::cout<<"ICI 2" << std::endl;
-//    this->Centre();
 }
 
 

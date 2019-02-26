@@ -10,20 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="76ad9664-b17a-4bde-bc18-ac0d21b4c67e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/help" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frame.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Frame.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Frame.o" beforeDir="false" afterPath="$PROJECT_DIR$/Frame.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/GamePanel.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/GamePanel.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/GamePanel.o" beforeDir="false" afterPath="$PROJECT_DIR$/GamePanel.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/InfoPanel.o" beforeDir="false" afterPath="$PROJECT_DIR$/InfoPanel.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyThread.cpp" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/MyThread.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/MyThread.o" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Opponents.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Opponents.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Opponents.h" beforeDir="false" afterPath="$PROJECT_DIR$/Opponents.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Piece.o" beforeDir="false" afterPath="$PROJECT_DIR$/Piece.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StartDialog.o" beforeDir="false" afterPath="$PROJECT_DIR$/StartDialog.o" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
@@ -56,8 +49,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/GamePanel.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="105">
-              <caret line="7" selection-start-line="7" selection-end-line="37" selection-end-column="2" />
+            <state relative-caret-position="-2229">
+              <caret line="359" column="12" selection-start-line="359" selection-start-column="12" selection-end-line="359" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -83,8 +76,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GamePanelOpponent.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="643">
-              <caret line="182" selection-start-line="182" selection-end-line="182" />
+            <state relative-caret-position="168">
+              <caret line="82" column="31" lean-forward="true" selection-start-line="82" selection-start-column="31" selection-end-line="82" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -172,11 +165,14 @@
       <find>Dropdow</find>
       <find>oneline</find>
       <find>PieceCheck</find>
+      <find>domov</find>
+      <find>piecedrop</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
       <list>
+        <option value="Nazotron &lt;kaminskyi.nazar.1923@gmail.com&gt;" />
         <option value="yaroslavmavliutov &lt;yaroslav.mavliutov@gmail.com&gt;" />
       </list>
     </option>
@@ -278,6 +274,7 @@
       <workItem from="1551176779712" duration="1294000" />
       <workItem from="1551186086178" duration="1634000" />
       <workItem from="1551196735431" duration="622000" />
+      <workItem from="1551208235686" duration="1349000" />
     </task>
     <task id="LOCAL-00001" summary="update">
       <created>1549229940018</created>
@@ -328,16 +325,24 @@
       <option name="project" value="LOCAL" />
       <updated>1550525143243</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="V2.2">
+      <created>1551208883085</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1551208883086</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="109842000" />
+    <option name="totallyTimeSpent" value="111191000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1" y="0" width="1922" height="1055" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23056443" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23269436" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -348,7 +353,7 @@
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.14838709" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.32903227" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="CMake" order="11" weight="0.19462365" />
@@ -367,7 +372,8 @@
     <MESSAGE value="update input login" />
     <MESSAGE value="check conflicts" />
     <MESSAGE value="play alone + LogIn" />
-    <option name="LAST_COMMIT_MESSAGE" value="play alone + LogIn" />
+    <MESSAGE value="V2.2" />
+    <option name="LAST_COMMIT_MESSAGE" value="V2.2" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/client_server.h" />
@@ -445,24 +451,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/help">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7395">
-          <caret line="493" column="1" selection-start-line="472" selection-end-line="493" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/help" />
     <entry file="file://$PROJECT_DIR$/InfoPanel.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="345">
           <caret line="23" column="9" selection-start-line="23" selection-start-column="9" selection-end-line="23" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GamePanel.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" selection-start-line="7" selection-end-line="37" selection-end-column="2" />
         </state>
       </provider>
     </entry>
@@ -522,10 +515,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/GamePanel.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2229">
+          <caret line="359" column="12" selection-start-line="359" selection-start-column="12" selection-end-line="359" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/GamePanelOpponent.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="182" selection-start-line="182" selection-end-line="182" />
+        <state relative-caret-position="168">
+          <caret line="82" column="31" lean-forward="true" selection-start-line="82" selection-start-column="31" selection-end-line="82" selection-end-column="31" />
         </state>
       </provider>
     </entry>
