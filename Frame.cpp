@@ -272,7 +272,7 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
 
 void Frame::StartPanels(int N) {
 
-    if (want_players == 2) {
+    if (N == 1) {
         opPanel = new Opponents(wxT("Opponents"), N);
         opPanel->Show(true);
     }
@@ -419,16 +419,16 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             }else if (strncmp( buf, "move", (size_t) 4 )==0){
                 std::cout << "MOVE      -> " << buf << std::endl;
                 std::cout << "END       -> " << buf[4] << std::endl;
-                if(want_players == 2)
+                if(nb_op == 2)
                     opPanel->m_lp->SetMovement(buf[4]);
             }else if(strncmp( buf, "next", (size_t) 4 )==0){
                 std::cout << "NEXT fig      -> " << buf[4] << std::endl;
-                if(want_players == 2)
+                if(nb_op == 2)
                     opPanel->m_lp->setNextPiece(buf[4]);
             }
             else if(strncmp( buf, "curr", (size_t) 4 )==0){
                 std::cout << "CURR fig      -> " << buf[4] << std::endl;
-                if(want_players == 2)
+                if(nb_op == 2)
                     opPanel->m_lp->setCurrentPiece(buf[4]);
             }
             else if(strncmp( buf, "score", (size_t) 5 )==0)
