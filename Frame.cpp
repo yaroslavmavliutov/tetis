@@ -66,7 +66,7 @@ Frame::Frame(const wxString& title)
     }
 
     m_text  = new wxTextCtrl(this, -1,
-                             wxString::Format(wxT(" ICI C'EST TETRIS\n Start page!\n Hello: %s \n You can start the game in menu!"), UserName),
+                             wxString::Format(wxT("Start page !\n Hello: %s \n You can start the game in menu!"), UserName),
                              wxDefaultPosition, wxDefaultSize,
                              wxTE_MULTILINE | wxTE_READONLY);
 
