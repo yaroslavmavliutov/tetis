@@ -1,39 +1,22 @@
+
 #include "GamePanel.h"
+#include "Piece.h"
 #include "InfoPanel.h"
 #include "Frame.h"
-#include <wx/stattext.h>
 #include <chrono>
 
-
-
-GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent)
-        : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
+GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent) : Board(parent_t, fr)
 {
-    first = true;
-    special = false;
     sock = m_sock;
     timer = new wxTimer(this, 1);
-    status_scr = fr->GetStatusBar();
-    pieceFallingFinished = false;
-    started = false;
-    paused = false;
-    score = 0;
-    lvl = 1;
-    curX = 0;
-    curY = 0;
-    panel = parent_t;
     TIMER_INTERVAL = 500;
     nb_opponent = m_nb_opponent;
-
-    PieceShape tmp;
-    tmp = PieceShape(rand()%7+1);
-    next.SetShape(tmp);
-    ClearBoard();
 
     Connect(wxEVT_PAINT, wxPaintEventHandler(GamePanel::OnPaint));
     Connect(wxEVT_KEY_DOWN, wxKeyEventHandler(GamePanel::OnKeyDown));
     Connect(wxEVT_TIMER, wxCommandEventHandler(GamePanel::OnTimer));
-//    std::cout << "GamePanel - constructor" << std::endl;
+
+    std::cout << "GamePanel - constructor" << std::endl;
 }
 
 void GamePanel::Start()
@@ -117,41 +100,35 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
         }
     }
 
-
     if (!started || current.GetShape() == None || paused)
     {
         event.Skip();
         return;
     }
 
-
-    if(!special) {
-        switch (keyCode) {
-            case WXK_SPACE:
-                sendMoveToServer('d');
-                DropDown();
-                break;
-            case WXK_UP:
-                sendMoveToServer('m');
-                DoMove(current.Rotation(), curX, curY);
-                break;
-            case WXK_DOWN:
-                sendMoveToServer('o');
-                DropOneLine();
-                break;
-            case WXK_LEFT:
-                //if (!CheckBounds(curX, current))
-                sendMoveToServer('l');
-                DoMove(current, curX - 1, curY);
-                break;
-            case WXK_RIGHT:
-                //if (!CheckBounds(curX, current))
-                sendMoveToServer('r');
-                DoMove(current, curX + 1, curY);
-                break;
-            default:
-                event.Skip();
-        }
+    switch (keyCode) {
+        case WXK_SPACE:
+            sendMoveToServer('d');
+            DropDown();
+            break;
+        case WXK_UP:
+            sendMoveToServer('m');
+            DoMove(current.Rotation(), curX, curY);
+            break;
+        case WXK_DOWN:
+            sendMoveToServer('o');
+            DropOneLine();
+            break;
+        case WXK_LEFT:
+            sendMoveToServer('l');
+            DoMove(current, curX - 1, curY);
+            break;
+        case WXK_RIGHT:
+            sendMoveToServer('r');
+            DoMove(current, curX + 1, curY);
+            break;
+        default:
+            event.Skip();
     }
 }
 
@@ -170,11 +147,6 @@ void GamePanel::OnTimer(wxCommandEvent& event)
     }
 }
 
-void GamePanel::ClearBoard()
-{
-    for (int i = 0; i < BoardHeight * BoardWidth; i++)
-        board[i] = None;
-}
 
 void GamePanel::DropDown()
 {
@@ -185,11 +157,13 @@ void GamePanel::DropDown()
     PieceDropped();
 }
 
+
 void GamePanel::DropOneLine()
 {
     if (!DoMove(current, curX, curY - 1))
         PieceDropped();
 }
+
 
 void GamePanel::PieceDropped()
 {
@@ -205,6 +179,7 @@ void GamePanel::PieceDropped()
     if (!pieceFallingFinished)
         MakeNewPiece();
 }
+
 
 void GamePanel::RemoveFullLines()
 {
@@ -242,41 +217,35 @@ void GamePanel::RemoveFullLines()
     str.Printf(wxT("Your lvl: %d"), lvl);
     status_scr->SetStatusText(str);
 
-    if(!special) {
+    Frame *comm = (Frame *) panel->GetParent();
+    comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s score: %d"), comm->UserName, score));
 
-        Frame *comm = (Frame *) panel->GetParent();
-        comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s score: %d"), comm->UserName, score));
+    if (nb_opponent > 0) {
+        char score_char[15] = "score";
+        std::string sc = std::to_string(score);
+        char const *pscore = sc.c_str();
+        strcat(score_char, comm->BufferName);
+        strcat(score_char, pscore);
 
-        if (nb_opponent > 0) {
-            char score_char[15] = "score";
-            std::string sc = std::to_string(score);
-            char const *pscore = sc.c_str();
-            strcat(score_char, comm->BufferName);
-            strcat(score_char, pscore);
-
-            size_t txn = strlen(score_char);
-            //std::cout << "GAME_PANAL txn = " << txn << std::endl;
-            unsigned char len;
-            len = txn;
-            sock->Write(&len, 1);//send the length of the message first
-            if (sock->Write(score_char, txn).LastCount() != txn) {
-                std::cout << "Write error.\n";
-                return;
-            } else {
-              //  std::cout << "CLIENT send score Tx: " << score_char << "\n";
-            }
+        size_t txn = strlen(score_char);
+        //std::cout << "GAME_PANAL txn = " << txn << std::endl;
+        unsigned char len;
+        len = txn;
+        sock->Write(&len, 1);//send the length of the message first
+        if (sock->Write(score_char, txn).LastCount() != txn) {
+            std::cout << "Write error.\n";
+            return;
+        } else {
+          //  std::cout << "CLIENT send score Tx: " << score_char << "\n";
         }
     }
+
     pieceFallingFinished = true;
     current.SetShape(None);
     timer->Start(this->TIMER_INTERVAL);
     Refresh();
 }
 
-
-int GamePanel::CalculatorScore(int points, int n) {
-    return points*(n+1);
-}
 
 void GamePanel::RandomPiece()
 {
@@ -288,6 +257,7 @@ void GamePanel::RandomPiece()
 
     PieceShape tmp;
     tmp = PieceShape(rand() % 7 + 1);
+
     if(nb_opponent==1)
         sendShapeToServer(tmp, 1);
     next.SetShape(tmp);
@@ -295,6 +265,7 @@ void GamePanel::RandomPiece()
     Frame *comm = (Frame *) panel->GetParent();
     comm->m_rp->piece.SetShape(None);
     comm->m_rp->ClearPeace();
+
     comm->m_rp->piece.SetShape(next.GetShape());
     comm->m_rp->ChangePeace();
 
@@ -310,85 +281,37 @@ void GamePanel::MakeNewPiece()
     if (!DoMove(current, curX, curY))
     {
         current.SetShape(None);
-//        if(nb_opponent>0)
-//            sendShapeToServer(None, 0);
         timer->Stop();
         started = false;
         status_scr->SetStatusText(wxT("You Lose :("));
-        if(!special){
-            Frame *comm = (Frame *) panel->GetParent();
-            comm->file->Enable(ID_PLAY, true);
-            //write Lose MSG
-            if(nb_opponent>0){
-                char lose[12] = "lose";
-                std::string sc = std::to_string(score);
-                char const *pscore = sc.c_str();
-                strcat(lose, comm->BufferName);
-                strcat(lose, pscore);
+        Frame *comm = (Frame *) panel->GetParent();
+        comm->file->Enable(ID_PLAY, true);
+        //write Lose MSG
+        if(nb_opponent>0){
+            char lose[12] = "lose";
+            std::string sc = std::to_string(score);
+            char const *pscore = sc.c_str();
+            strcat(lose, comm->BufferName);
+            strcat(lose, pscore);
 
-                size_t txn = strlen(lose);
-                unsigned char len;
-                len = txn;
+            size_t txn = strlen(lose);
+            unsigned char len;
+            len = txn;
 
-                sock->Write(&len, 1);
-                sock->Write(&lose, len);
-                sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-                comm->server_on = true;
-            }
+            sock->Write(&len, 1);
+            sock->Write(&lose, len);
+            sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+            comm->server_on = true;
+        }
 
-            comm->Setbusy(true);
-            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
-            if(nb_opponent==0){
-                comm->file->Enable(ID_CREATE_GAME, true);
-                comm->file->Enable(ID_JOIN_GAME, true);
-            }
+        comm->Setbusy(true);
+        comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
+        if(nb_opponent==0){
+            comm->file->Enable(ID_CREATE_GAME, true);
+            comm->file->Enable(ID_JOIN_GAME, true);
         }
     }
 }
-
-bool GamePanel::DoMove(const Piece& piece, int newX, int newY)
-{
-
-    for (int i = 0; i < 4; i++)
-    {
-        int x = newX + piece.x(i);
-        int y = newY - piece.y(i);
-
-        if (!CheckBounds(x, y) || PieceCheck(x, y) != None)
-            return false;
-    }
-
-    current = piece;
-    curX = newX;
-    curY = newY;
-
-    Refresh();
-
-    return true;
-}
-
-void GamePanel::DrawPieceSquare(wxPaintDC& dc, int x, int y, PieceShape pieceShape)
-{
-    wxPen lightPen(light[int(pieceShape)]);
-    lightPen.SetCap(wxCAP_PROJECTING);
-    dc.SetPen(lightPen);
-
-    dc.DrawLine(x, y + Height() - 1, x, y);
-    dc.DrawLine(x, y, x + Width() - 1, y);
-
-    wxPen darkPen(dark[int(pieceShape)]);
-    darkPen.SetCap(wxCAP_PROJECTING);
-    dc.SetPen(darkPen);
-
-    dc.DrawLine(x + 1, y + Height() - 1, x + Width() - 1, y + Height() - 1);
-    dc.DrawLine(x + Width() - 1, y + Height() - 1, x + Width() - 1, y + 1);
-
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.SetBrush(wxBrush(colors[int(pieceShape)]));
-
-    dc.DrawRectangle(x + 1, y + 1, Width() - 2, Height() - 2);
-}
-
 
 
 void GamePanel::sendMoveToServer(char c) {
@@ -439,6 +362,7 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
                 c = 'N';
         }
 
+
         if (curr_or_next == 1) {    // next piece
             char move[6] = "next";
             move[4] = c;
@@ -454,6 +378,5 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
             sock->Write(&len,1);
             sock->Write(&move, len);
         }
-
     }
 }

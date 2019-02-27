@@ -1,6 +1,7 @@
 #ifndef FRAME_H
 #define FRAME_H
 
+#include "Board.h"
 #include "Opponents.h"
 #include "GamePanel.h"
 #include "InfoPanel.h"

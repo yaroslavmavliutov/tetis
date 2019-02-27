@@ -424,12 +424,12 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             }else if(strncmp( buf, "next", (size_t) 4 )==0){
                 std::cout << "NEXT fig      -> " << buf[4] << std::endl;
                 if(nb_op == 2)
-                    opPanel->m_lp->setNextPiece(buf[4]);
+                    opPanel->m_lp->setNextOrCurrentPiece(buf[4], 1);
             }
             else if(strncmp( buf, "curr", (size_t) 4 )==0){
                 std::cout << "CURR fig      -> " << buf[4] << std::endl;
                 if(nb_op == 2)
-                    opPanel->m_lp->setCurrentPiece(buf[4]);
+                    opPanel->m_lp->setNextOrCurrentPiece(buf[4], 0);
             }
             else if(strncmp( buf, "score", (size_t) 5 )==0)
             {

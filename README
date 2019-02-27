@@ -4,7 +4,5 @@ Il faut installer biblio
 ________________________________________________________________________________________________________________________
 
 
-g++ -std=c++11 -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp Opponents.cpp SelectOpponentsPanel.cpp Server.cpp StartDialog.cpp GamePanelOpponent.cpp `wx-config --libs`
-
-g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o Opponents.o SelectOpponentsPanel.o Server.o StartDialog.o GamePanelOpponent.o `wx-config --libs`
-
+g++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp Opponents.cpp SelectOpponentsPanel.cpp Server.cpp StartDialog.cpp GamePanelOpponent.cpp Board.cpp `wx-config --libs`
+g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o Opponents.o SelectOpponentsPanel.o Server.o StartDialog.o GamePanelOpponent.o Board.o `wx-config --libs`
