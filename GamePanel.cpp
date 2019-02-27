@@ -313,8 +313,7 @@ void GamePanel::MakeNewPiece()
     curY = BoardHeight - 1 + current.MinY();
 
     try {
-        if (!DoMove(current, curX, curY))
-        {
+        if (!DoMove(current, curX, curY)) {
             current.SetShape(None);
             timer->Stop();
             started = false;
@@ -322,7 +321,7 @@ void GamePanel::MakeNewPiece()
             Frame *comm = (Frame *) panel->GetParent();
             comm->file->Enable(ID_PLAY, true);
             //write Lose MSG
-            if(nb_opponent>0){
+            if (nb_opponent > 0) {
                 char lose[12] = "lose";
                 std::string sc = std::to_string(score);
                 char const *pscore = sc.c_str();
@@ -339,20 +338,12 @@ void GamePanel::MakeNewPiece()
                 comm->server_on = true;
             }
 
-<<<<<<< HEAD
             comm->Setbusy(true);
-            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
-            if(nb_opponent==0){
+            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s final score: %d"), comm->UserName, score));
+            if (nb_opponent == 0) {
                 comm->file->Enable(ID_CREATE_GAME, true);
                 comm->file->Enable(ID_JOIN_GAME, true);
             }
-=======
-        comm->Setbusy(true);
-        comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s final score: %d"), comm->UserName, score));
-        if(nb_opponent==0){
-            comm->file->Enable(ID_CREATE_GAME, true);
-            comm->file->Enable(ID_JOIN_GAME, true);
->>>>>>> 36eae6465f9af833ae6986ecba2106ed9c3e0d53
         }
     }
     catch (std::exception& e) {
@@ -439,8 +430,6 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
 
     }
 }
-
-
 
 
 void GamePanel::SetMovement(char c) {
