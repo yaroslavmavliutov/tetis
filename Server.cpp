@@ -150,31 +150,29 @@ void Server::OnServerEvent(wxSocketEvent& event)
         sockBase = sock->Accept(false);
         clients.push_back(sockBase);
     }
-    try
+    //try
+    //{
+    if (sockBase )
     {
-        if (sockBase )
+        IPaddress addr;
+        if (!sockBase->GetPeer(addr))
         {
-            IPaddress addr;
-            if (!sockBase->GetPeer(addr))
-            {
-                txtRx->AppendText(wxT("New connection from unknown client accepted.\n"));
-            }
-            else
-            {
-                txtRx->AppendText(wxString::Format(wxT("New client connection from %s:%u accepted \n"),
-                                                   addr.IPAddress(), addr.Service()));
-            }
+            txtRx->AppendText(wxT("New connection from unknown client accepted.\n"));
         }
-        else
-        {
-            txtRx->AppendText(wxT("Error: couldn't accept a new connection \n"));
-            return;
+        else {
+            txtRx->AppendText(wxString::Format(wxT("New client connection from %s:%u accepted \n"),
+                    addr.IPAddress(), addr.Service()));
         }
     }
-    catch (exception& e)
-    {
-        std::cout<<"ERROR\n "<< std::endl;
+    else {
+        txtRx->AppendText(wxT("Error: couldn't accept a new connection \n"));
+        return;
     }
+    //}
+    //catch (exception& e)
+    //{
+    //    std::cout<<"ERROR\n "<< std::endl;
+    //}
 
 
     sockBase ->SetEventHandler( *this, SERVER_SOCKET_ID);
@@ -187,16 +185,16 @@ void Server::OnServerEvent(wxSocketEvent& event)
     size_t txn = strlen(connected);
     unsigned char len;
     len = txn;
-    try
-    {
-        sockBase->Write(&len,1);
-        sockBase->Write(&connected, len);
-        txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), connected));
-    }
-    catch (exception& e)
-    {
-        std::cout<<"ERROR\n "<< std::endl;
-    }
+    //try
+    //{
+    sockBase->Write(&len,1);
+    sockBase->Write(&connected, len);
+    txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), connected));
+    //}
+    //catch (exception& e)
+    //{
+    //    std::cout<<"ERROR\n "<< std::endl;
+    //}
 
         //std::cout << "send start_MSG:  " << start << "\n";
         // Enable input events again.
@@ -262,8 +260,8 @@ void Server::OnSocketEvent(wxSocketEvent& event)
             }
 
             txtRx->AppendText(wxString::Format(wxT("Server Read x: %s \n"),wxString::FromUTF8(buf, len)));
-            try
-            {
+            //try
+           // {
                 if(strncmp( buf, "login", (size_t) 5 )==0){
                     int n = len ;//- '0';
 //                std::cout << "login n -> " << n << std::endl;
@@ -369,11 +367,11 @@ void Server::OnSocketEvent(wxSocketEvent& event)
 
                     }
                 }
-            }
-            catch (exception& e)
-            {
-                std::cout<<"ERROR\n "<< std::endl;
-            }
+            //}
+            //catch (exception& e)
+            //{
+            //    std::cout<<"ERROR\n "<< std::endl;
+            //}
 
 
             break;

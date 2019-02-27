@@ -12,13 +12,7 @@ GamePanelOpponent::GamePanelOpponent(wxPanel* parent_t, wxFrame *fr)
 {
     started = true;
 
-<<<<<<< HEAD
-    status_scr->SetStatusText(wxT("Opponent's lvl: 1"));
-
-    std::cout << "GamePanel - constructor vide" << std::endl;
-=======
     std::cout << "GamePanelOpponent - constructor vide" << std::endl;
->>>>>>> 27b2905ba529b71c035c7bc5776d36698404f85d
 }
 
 
