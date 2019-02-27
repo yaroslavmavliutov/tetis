@@ -52,6 +52,7 @@ public:
     void sendLogin();
     char *opponentslog [3];
     int lenlogins[3];
+    int opponentScores[3];
     int nb_op;
     int index; // для правильного розташування панельок
 //-----------------------------------------------------------------------------------------

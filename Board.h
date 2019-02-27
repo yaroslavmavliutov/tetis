@@ -50,8 +50,11 @@ public:
         Board(wxPanel* parent_t, wxFrame *fr);
         PieceShape GetNextShape() const { return next.GetShape(); }
         void setNextOrCurrentPiece(char c, int current_next);
+        int main_score;
+
 
 protected:
+
         enum { BoardWidth = 10, BoardHeight = 22 };
         PieceShape& PieceCheck(int x, int y) { return board[y * BoardWidth + x]; }
 

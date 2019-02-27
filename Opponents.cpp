@@ -19,7 +19,6 @@ Opponents::Opponents(const wxString& title, int nb_opponents)
 
     m_lp->SetFocus();
 
-//    srand(time(NULL));
     hbox->Add(m_lp, 1, wxSHAPED | wxALL, 5);
 
     m_parent->SetSizer(hbox);

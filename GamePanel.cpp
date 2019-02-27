@@ -211,6 +211,7 @@ void GamePanel::RemoveFullLines()
     else if (lines == 3) score+= CalculatorScore(300, lvl);
     else if (lines == 4) score+= CalculatorScore(1200, lvl);
 
+    main_score = score;
     lvl = score/500 + 1;
     this->TIMER_INTERVAL = this->TIMER_INTERVAL - lines*25;
     wxString str;
@@ -305,7 +306,7 @@ void GamePanel::MakeNewPiece()
         }
 
         comm->Setbusy(true);
-        comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
+        comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s final score: %d"), comm->UserName, score));
         if(nb_opponent==0){
             comm->file->Enable(ID_CREATE_GAME, true);
             comm->file->Enable(ID_JOIN_GAME, true);
@@ -378,5 +379,23 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
             sock->Write(&len,1);
             sock->Write(&move, len);
         }
+    }
+}
+
+
+
+
+void GamePanel::SetMovement(char c) {
+    switch (c) {
+        case 'd':
+            if (started == true) {
+                sendMoveToServer('d');
+                DropDown();
+            }
+            break;
+
+        default:
+            //event.Skip();
+            std::cout << "Non move value" << std::endl;
     }
 }

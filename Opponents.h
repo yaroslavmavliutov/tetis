@@ -23,7 +23,6 @@ public:
     std::string UserName;
     char BufferName[6];
 
-    // ctor(s)
     Opponents(const wxString& title, int nb_opponents);
     ~Opponents();
 
@@ -35,8 +34,7 @@ public:
     wxStatusBar *statusScore;
 
 private:
-    // any class wishing to process wxWidgets events must use this macro
-//    wxDECLARE_EVENT_TABLE();
+
 };
 
 #endif //TETIS_OPPONENTS_H
