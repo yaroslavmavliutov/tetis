@@ -50,20 +50,9 @@ Frame::Frame(const wxString& title)
     //username типу std::string
     UserName = user->GetName();
 
-    try
-    {
-        // це перевірка якшо хрестик для виходу нажали, то шоб не запустилось основне вікно, треба Close(true);
-        if (UserName == "") {
-            user->Destroy();
-            Close(true);
-        }
-        // тут записуємо в буфер значення
-        strcpy(BufferName, UserName.c_str());
-    }
-    catch (exception& e)
-    {
-        std::cout<<"ERROR\n "<< std::endl;
-    }
+
+    strcpy(BufferName, UserName.c_str());
+
 
     m_text  = new wxTextCtrl(this, -1,
                              wxString::Format(wxT("Start page !\n Hello: %s \n You can start the game in menu!"), UserName),
@@ -169,16 +158,13 @@ void Frame::sendLogin(){
 
     unsigned char len;
     len = txn;
-    try
-    {
+    try {
         sock->Write(&len,1);
         sock->Write(&login, len);
         std::cout << "login_MSG:  " << login << "\n";
     }
     catch (exception& e)
-    {
         std::cout<<"ERROR\n "<< std::endl;
-    }
 
 
     //sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
@@ -255,9 +241,9 @@ void Frame::OnCreate(wxCommandEvent& WXUNUSED(event)) {
         OpenConnection();
         std::cout << "SERVER waiting for players" << std::endl;
     }else {
-    file->Enable(ID_PLAY, true);
-    file->Enable(ID_CREATE_GAME, true);
-    file->Enable(ID_JOIN_GAME, true);
+        file->Enable(ID_PLAY, true);
+        file->Enable(ID_CREATE_GAME, true);
+        file->Enable(ID_JOIN_GAME, true);
     }
 }
 
@@ -277,7 +263,6 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
         statusScore = CreateStatusBar(3);
-
     }
 
 
@@ -304,15 +289,12 @@ void Frame::StartPanels(int N) {
     m_rp = new InfoPanel(m_parent, fr, N); // 0 - opponents
     m_lp = new GamePanel(m_parent, fr, sock, N); // 0 - opponents
 
-
     //Start tetris
 
     m_lp->SetFocus();
     m_lp->Start();
 
     srand(time(NULL));
-
-
 
     hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
@@ -366,8 +348,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
             sockBase->Read(&len, 1);
             char buf[256];
             // Read the message
-            try
-            {
+            try {
                 wxUint32 lenRd = sockBase->Read(buf, len).LastCount();
                 if (!lenRd) {
                     std::cout<< "Failed to read message." << std::endl;
@@ -378,12 +359,9 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                 }
             }
             catch (exception& e)
-            {
                 std::cout<<"ERROR\n "<< std::endl;
-            }
 
-            try
-            {
+            try {
                 // обробка повідомлення з сервера
                 if(strncmp( buf, "conn", (size_t) 4 )==0){
                     sendLogin();
@@ -483,10 +461,7 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                 }
             }
             catch (exception& e)
-            {
                 std::cout<<"ERROR\n "<< std::endl;
-            }
-
 
             // Enable input events again.
             sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);

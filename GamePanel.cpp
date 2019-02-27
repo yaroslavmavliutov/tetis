@@ -4,6 +4,7 @@
 #include "InfoPanel.h"
 #include "Frame.h"
 #include <chrono>
+#include <exception>
 
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent) : Board(parent_t, fr)
 {
@@ -106,30 +107,35 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
         return;
     }
 
-    switch (keyCode) {
-        case WXK_SPACE:
-            sendMoveToServer('d');
-            DropDown();
-            break;
-        case WXK_UP:
-            sendMoveToServer('m');
-            DoMove(current.Rotation(), curX, curY);
-            break;
-        case WXK_DOWN:
-            sendMoveToServer('o');
-            DropOneLine();
-            break;
-        case WXK_LEFT:
-            sendMoveToServer('l');
-            DoMove(current, curX - 1, curY);
-            break;
-        case WXK_RIGHT:
-            sendMoveToServer('r');
-            DoMove(current, curX + 1, curY);
-            break;
-        default:
-            event.Skip();
+    try {
+        switch (keyCode) {
+            case WXK_SPACE:
+                sendMoveToServer('d');
+                DropDown();
+                break;
+            case WXK_UP:
+                sendMoveToServer('m');
+                DoMove(current.Rotation(), curX, curY);
+                break;
+            case WXK_DOWN:
+                sendMoveToServer('o');
+                DropOneLine();
+                break;
+            case WXK_LEFT:
+                sendMoveToServer('l');
+                DoMove(current, curX - 1, curY);
+                break;
+            case WXK_RIGHT:
+                sendMoveToServer('r');
+                DoMove(current, curX + 1, curY);
+                break;
+            default:
+                event.Skip();
+        }
     }
+    catch (std::exception& e)
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
+
 }
 
 
@@ -143,7 +149,12 @@ void GamePanel::OnTimer(wxCommandEvent& event)
     else {
         DropOneLine();
         if (nb_opponent == 1)
-            sendMoveToServer('o');
+            try {
+                sendMoveToServer('o');
+            }
+            catch (std::exception& e)
+                std::cout<<"ERROR\n "<< e.what() << std::endl;
+
     }
 }
 
@@ -168,7 +179,11 @@ void GamePanel::DropOneLine()
 void GamePanel::PieceDropped()
 {
     if(nb_opponent==1)
-        sendMoveToServer('x');
+        try {
+            sendMoveToServer('x');
+        }
+        catch (std::exception& e)
+            std::cout<<"ERROR\n "<< e.what() << std::endl;
     for (int i = 0; i < 4; i++)
     {
         int x = curX + current.x(i);
@@ -220,25 +235,29 @@ void GamePanel::RemoveFullLines()
     Frame *comm = (Frame *) panel->GetParent();
     comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s score: %d"), comm->UserName, score));
 
-    if (nb_opponent > 0) {
-        char score_char[15] = "score";
-        std::string sc = std::to_string(score);
-        char const *pscore = sc.c_str();
-        strcat(score_char, comm->BufferName);
-        strcat(score_char, pscore);
+    try {
+        if (nb_opponent > 0) {
+            char score_char[15] = "score";
+            std::string sc = std::to_string(score);
+            char const *pscore = sc.c_str();
+            strcat(score_char, comm->BufferName);
+            strcat(score_char, pscore);
 
-        size_t txn = strlen(score_char);
-        //std::cout << "GAME_PANAL txn = " << txn << std::endl;
-        unsigned char len;
-        len = txn;
-        sock->Write(&len, 1);//send the length of the message first
-        if (sock->Write(score_char, txn).LastCount() != txn) {
-            std::cout << "Write error.\n";
-            return;
-        } else {
-          //  std::cout << "CLIENT send score Tx: " << score_char << "\n";
+            size_t txn = strlen(score_char);
+            //std::cout << "GAME_PANAL txn = " << txn << std::endl;
+            unsigned char len;
+            len = txn;
+            sock->Write(&len, 1);//send the length of the message first
+            if (sock->Write(score_char, txn).LastCount() != txn) {
+                std::cout << "Write error.\n";
+                return;
+            } else {
+                //  std::cout << "CLIENT send score Tx: " << score_char << "\n";
+            }
         }
     }
+    catch (std::exception& e)
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
 
     pieceFallingFinished = true;
     current.SetShape(None);
@@ -251,15 +270,23 @@ void GamePanel::RandomPiece()
 {
 
     current.SetShape(next.GetShape());
-    if(nb_opponent==1)
-        sendShapeToServer(current.GetShape(), 0);
-
+    try {
+        if(nb_opponent==1)
+            sendShapeToServer(current.GetShape(), 0);
+    }
+    catch (std::exception& e)
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
 
     PieceShape tmp;
     tmp = PieceShape(rand() % 7 + 1);
 
-    if(nb_opponent==1)
-        sendShapeToServer(tmp, 1);
+    try {
+        if(nb_opponent==1)
+            sendShapeToServer(tmp, 1);
+    }
+    catch (std::exception& e)
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
+
     next.SetShape(tmp);
 
     Frame *comm = (Frame *) panel->GetParent();
@@ -278,39 +305,44 @@ void GamePanel::MakeNewPiece()
     curX = BoardWidth / 2;
     curY = BoardHeight - 1 + current.MinY();
 
-    if (!DoMove(current, curX, curY))
-    {
-        current.SetShape(None);
-        timer->Stop();
-        started = false;
-        status_scr->SetStatusText(wxT("You Lose :("));
-        Frame *comm = (Frame *) panel->GetParent();
-        comm->file->Enable(ID_PLAY, true);
-        //write Lose MSG
-        if(nb_opponent>0){
-            char lose[12] = "lose";
-            std::string sc = std::to_string(score);
-            char const *pscore = sc.c_str();
-            strcat(lose, comm->BufferName);
-            strcat(lose, pscore);
+    try {
+        if (!DoMove(current, curX, curY))
+        {
+            current.SetShape(None);
+            timer->Stop();
+            started = false;
+            status_scr->SetStatusText(wxT("You Lose :("));
+            Frame *comm = (Frame *) panel->GetParent();
+            comm->file->Enable(ID_PLAY, true);
+            //write Lose MSG
+            if(nb_opponent>0){
+                char lose[12] = "lose";
+                std::string sc = std::to_string(score);
+                char const *pscore = sc.c_str();
+                strcat(lose, comm->BufferName);
+                strcat(lose, pscore);
 
-            size_t txn = strlen(lose);
-            unsigned char len;
-            len = txn;
+                size_t txn = strlen(lose);
+                unsigned char len;
+                len = txn;
 
-            sock->Write(&len, 1);
-            sock->Write(&lose, len);
-            sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-            comm->server_on = true;
-        }
+                sock->Write(&len, 1);
+                sock->Write(&lose, len);
+                sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+                comm->server_on = true;
+            }
 
-        comm->Setbusy(true);
-        comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
-        if(nb_opponent==0){
-            comm->file->Enable(ID_CREATE_GAME, true);
-            comm->file->Enable(ID_JOIN_GAME, true);
+            comm->Setbusy(true);
+            comm->m_rp->strings_score[0]->SetLabel(wxString::Format(wxT("%s Lose final score: %d"), comm->UserName, score));
+            if(nb_opponent==0){
+                comm->file->Enable(ID_CREATE_GAME, true);
+                comm->file->Enable(ID_JOIN_GAME, true);
+            }
         }
     }
+    catch (std::exception& e)
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
+
 }
 
 
@@ -318,13 +350,18 @@ void GamePanel::sendMoveToServer(char c) {
     unsigned char len;
     size_t txn;
     char move[5] = "move";
-    if(nb_opponent==1){
-        move[4] = c;
-        txn = strlen(move);
-        len = txn;
-        sock->Write(&len,1);
-        sock->Write(&move, len);
+
+    try {
+        if(nb_opponent==1){
+            move[4] = c;
+            txn = strlen(move);
+            len = txn;
+            sock->Write(&len,1);
+            sock->Write(&move, len);
+        }
     }
+    catch (std::exception& e)
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
 }
 
 
@@ -362,21 +399,25 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
                 c = 'N';
         }
 
-
-        if (curr_or_next == 1) {    // next piece
-            char move[6] = "next";
-            move[4] = c;
-            txn = strlen(move);
-            len = txn;
-            sock->Write(&len,1);
-            sock->Write(&move, len);
-        }else{                      // current piece
-            char move[6] = "curr";
-            move[4] = c;
-            txn = strlen(move);
-            len = txn;
-            sock->Write(&len,1);
-            sock->Write(&move, len);
+        try {
+            if (curr_or_next == 1) {    // next piece
+                char move[6] = "next";
+                move[4] = c;
+                txn = strlen(move);
+                len = txn;
+                sock->Write(&len,1);
+                sock->Write(&move, len);
+            }else{                      // current piece
+                char move[6] = "curr";
+                move[4] = c;
+                txn = strlen(move);
+                len = txn;
+                sock->Write(&len,1);
+                sock->Write(&move, len);
+            }
         }
+        catch (std::exception& e)
+            std::cout<<"ERROR\n "<< e.what() << std::endl;
+
     }
 }
