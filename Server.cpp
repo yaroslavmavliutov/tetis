@@ -168,8 +168,9 @@ void Server::OnServerEvent(wxSocketEvent& event)
             return;
         }
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
 
     sockBase ->SetEventHandler( *this, SERVER_SOCKET_ID);
@@ -187,8 +188,9 @@ void Server::OnServerEvent(wxSocketEvent& event)
         sockBase->Write(&connected, len);
         txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), connected));
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
         //std::cout << "send start_MSG:  " << start << "\n";
         // Enable input events again.
@@ -361,8 +363,9 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                     }
                 }
             }
-            catch (std::exception& e)
-                std::cout<<"ERROR\n "<< e.what() << std::endl;
+            catch (std::exception& e) {
+                std::cout << "ERROR\n " << e.what() << std::endl;
+            }
 
 
             break;

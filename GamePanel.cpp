@@ -133,8 +133,9 @@ void GamePanel::OnKeyDown(wxKeyEvent& event)
                 event.Skip();
         }
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
 }
 
@@ -152,8 +153,9 @@ void GamePanel::OnTimer(wxCommandEvent& event)
             try {
                 sendMoveToServer('o');
             }
-            catch (std::exception& e)
-                std::cout<<"ERROR\n "<< e.what() << std::endl;
+            catch (std::exception& e) {
+                std::cout << "ERROR\n " << e.what() << std::endl;
+            }
 
     }
 }
@@ -182,8 +184,9 @@ void GamePanel::PieceDropped()
         try {
             sendMoveToServer('x');
         }
-        catch (std::exception& e)
-            std::cout<<"ERROR\n "<< e.what() << std::endl;
+        catch (std::exception& e) {
+            std::cout << "ERROR\n " << e.what() << std::endl;
+        }
     for (int i = 0; i < 4; i++)
     {
         int x = curX + current.x(i);
@@ -256,8 +259,9 @@ void GamePanel::RemoveFullLines()
             }
         }
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
     pieceFallingFinished = true;
     current.SetShape(None);
@@ -274,8 +278,9 @@ void GamePanel::RandomPiece()
         if(nb_opponent==1)
             sendShapeToServer(current.GetShape(), 0);
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
     PieceShape tmp;
     tmp = PieceShape(rand() % 7 + 1);
@@ -284,8 +289,9 @@ void GamePanel::RandomPiece()
         if(nb_opponent==1)
             sendShapeToServer(tmp, 1);
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
     next.SetShape(tmp);
 
@@ -340,8 +346,9 @@ void GamePanel::MakeNewPiece()
             }
         }
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 
 }
 
@@ -360,8 +367,9 @@ void GamePanel::sendMoveToServer(char c) {
             sock->Write(&move, len);
         }
     }
-    catch (std::exception& e)
-        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    catch (std::exception& e) {
+        std::cout << "ERROR\n " << e.what() << std::endl;
+    }
 }
 
 
@@ -416,8 +424,9 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
                 sock->Write(&move, len);
             }
         }
-        catch (std::exception& e)
-            std::cout<<"ERROR\n "<< e.what() << std::endl;
+        catch (std::exception& e) {
+            std::cout << "ERROR\n " << e.what() << std::endl;
+        }
 
     }
 }

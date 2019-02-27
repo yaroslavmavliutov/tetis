@@ -163,8 +163,9 @@ void Frame::sendLogin(){
         sock->Write(&login, len);
         std::cout << "login_MSG:  " << login << "\n";
     }
-    catch (exception& e)
-        std::cout<<"ERROR\n "<< std::endl;
+    catch (std::exception& e) {
+        std::cout<<"ERROR\n "<< e.what() << std::endl;
+    }
 
 
     //sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
@@ -263,6 +264,7 @@ void Frame::OnJoin(wxCommandEvent& WXUNUSED(event)) {
         m_text->Destroy();
         m_parent = new wxPanel(this, wxID_ANY);
         statusScore = CreateStatusBar(3);
+
     }
 
 
@@ -289,12 +291,15 @@ void Frame::StartPanels(int N) {
     m_rp = new InfoPanel(m_parent, fr, N); // 0 - opponents
     m_lp = new GamePanel(m_parent, fr, sock, N); // 0 - opponents
 
+
     //Start tetris
 
     m_lp->SetFocus();
     m_lp->Start();
 
     srand(time(NULL));
+
+
 
     hbox->Add(m_lp, 1, wxEXPAND | wxALL, 5);
     hbox->Add(m_rp, 1, wxEXPAND | wxALL, 5);
@@ -358,8 +363,9 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                     std::cout<< "CLIENT Read  -> " <<lenRd <<" bytes."  << std::endl;
                 }
             }
-            catch (exception& e)
-                std::cout<<"ERROR\n "<< std::endl;
+            catch (std::exception& e) {
+                std::cout<<"ERROR\n "<< e.what() << std::endl;
+            }
 
             try {
                 // обробка повідомлення з сервера
@@ -460,8 +466,10 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
 
                 }
             }
-            catch (exception& e)
-                std::cout<<"ERROR\n "<< std::endl;
+            catch (std::exception& e) {
+                std::cout<<"ERROR\n "<< e.what() << std::endl;
+            }
+
 
             // Enable input events again.
             sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);

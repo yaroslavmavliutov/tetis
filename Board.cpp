@@ -4,7 +4,6 @@
 
 #include "Board.h"
 
-
 Board::Board(wxPanel* parent_t, wxFrame *fr)
         : wxPanel(parent_t, -1, wxPoint(5, 5), wxSize(170, 310), wxBORDER_SUNKEN)
 {
