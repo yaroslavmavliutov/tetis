@@ -1,8 +1,15 @@
-Il faut installer biblio
+To run this program you need to install the library WxWidgets 3.0
 
+link : https://sites.google.com/site/opensourceconstriubtions/ettl-martin-1/tutorials/how-to-install-wxwidgets-on-a-linux-system
 
 ________________________________________________________________________________________________________________________
 
+The compilation takes place in 2 stages:
 
-g++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp Opponents.cpp SelectOpponentsPanel.cpp Server.cpp StartDialog.cpp GamePanelOpponent.cpp Board.cpp `wx-config --libs`
-g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o Opponents.o SelectOpponentsPanel.o Server.o StartDialog.o GamePanelOpponent.o Board.o `wx-config --libs`
+1 ---  g++ -c `wx-config --cppflags` main.cpp Piece.cpp GamePanel.cpp Frame.cpp InfoPanel.cpp Opponents.cpp SelectOpponentsPanel.cpp Server.cpp StartDialog.cpp GamePanelOpponent.cpp Board.cpp `wx-config --libs`
+
+2 ---  g++ -o tetris `wx-config --cppflags` main.o Piece.o GamePanel.o Frame.o InfoPanel.o Opponents.o SelectOpponentsPanel.o Server.o StartDialog.o GamePanelOpponent.o Board.o `wx-config --libs`
+
+To run:
+
+./tetris

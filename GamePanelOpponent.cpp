@@ -118,6 +118,8 @@ void GamePanelOpponent::RemoveFullLines()
 }
 
 
+
+
 void GamePanelOpponent::SetMovement(char c) {
     switch (c) {
         case 'd':

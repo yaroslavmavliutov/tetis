@@ -43,6 +43,10 @@ Frame::Frame(const wxString& title)
 
     Center();
 
+    for(int i=0;i<3;i++){
+        opponentScores[i] = 0;
+    }
+
     menubar->Append(file, wxT("&File"));
     SetMenuBar(menubar);
 
@@ -402,14 +406,14 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                     int pos;
                     for(int i = 0; i<nb_op; i++){
                         if(strncmp( Server::substr(buf, 4, lenlogins[i]), opponentslog[i], (size_t) lenlogins[i] )==0) {
-                            score = std::stoi( Server::substr(buf, (4+lenlogins[i]), (len - 4 - lenlogins[i])) );
+                            int tmp_score = std::stoi( Server::substr(buf, (4+lenlogins[i]), (len - 4 - lenlogins[i])) );
                             if(i<index){
                                 pos = i+1;
                             }else
                             {
                                 pos = i;
                             }
-                            m_rp->strings_score[pos]->SetLabel(wxString::Format(wxT("%s lose final score: %d"), opponentslog[i], score));
+                            m_rp->strings_score[pos]->SetLabel(wxString::Format(wxT("%s final score: %d"), opponentslog[i], tmp_score));
                             break;
                         }
                     }
@@ -418,11 +422,29 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                     //
                     int tmp = len - 8;
                     std::cout<<"GAMEOVER MSG-> "<<buf << " lenlog->"<< tmp <<std::endl;
-                    if(strncmp( Server::substr(buf, 8, tmp), BufferName, (size_t) strlen(BufferName) )==0){
+                    int max=-1;
+                    for (int i = 0 ; i < 3 ; i++)
+                    {
+                        if (opponentScores[i] > max)
+                            max = opponentScores[i];
+                    }
+                    std::cout<<"------------MAX-_______ " << max << std::endl;
+                    std::cout<<"------------Score-_______ " << m_lp->main_score << std::endl;
+
+                    if(m_lp->main_score==max){
                         ShowMessageWin();
+                        SetStatusText(wxString::Format(wxT("You win!")), 0);
                     }else{
                         ShowMessageLose();
+                        SetStatusText(wxString::Format(wxT("You lose!")), 0);
                     }
+
+
+//                    if(strncmp( Server::substr(buf, 8, tmp), BufferName, (size_t) strlen(BufferName) )==0){
+//                        ShowMessageWin();
+//                    }else{
+//                        ShowMessageLose();
+//                    }
                     CloseConnection();
                     file->Enable(ID_CREATE_GAME, true);
                     file->Enable(ID_JOIN_GAME, true);
@@ -459,6 +481,10 @@ void Frame::OnSocketEvent(wxSocketEvent& event)
                             {
                                 pos = i;
                             }
+                            if((score - opponentScores[pos]) > 70){
+                                m_lp->SetMovement('d');
+                            }
+                            opponentScores[pos] = score;
                             m_rp->strings_score[pos]->SetLabel(wxString::Format(wxT("%s score: %d"), opponentslog[i], score));
                             break;
                         }
