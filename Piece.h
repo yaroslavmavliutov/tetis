@@ -20,7 +20,6 @@ class Piece
 {
 public:
     Piece() { SetShape(None); }
-
     void SetShape(PieceShape shape);
 
     PieceShape GetShape() const { return pieceShape; }

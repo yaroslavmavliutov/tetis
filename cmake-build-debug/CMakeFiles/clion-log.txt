@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /home/yaroslav/Downloads/clion-2018.2.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/yaroslav/CLionProjects/tetis
 -- The C compiler identification is GNU 5.4.0
 -- The CXX compiler identification is GNU 5.4.0
@@ -13,6 +14,9 @@
 -- Detecting CXX compiler ABI info - done
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
+=======
+/home/nazar/clion-2018.3.3/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/nazar/CLionProjects/tetis
+>>>>>>> 2cfce5eab76e84230cf45e2f8ac64ff4aeb9643a
 -- Configuring done
 CMake Error at CMakeLists.txt:6 (add_executable):
   Cannot find source file:

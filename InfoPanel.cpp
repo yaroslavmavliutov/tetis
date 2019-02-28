@@ -17,15 +17,15 @@ InfoPanel::InfoPanel(wxPanel * parent_t, wxFrame *fr, int nb_opponent)
     int pos;
     char *user;
     for (int i = 0 ; i < nb_opponent+1; i++){
-        if(i<comm->index){
+        if(i<comm->getIndex()){
             pos = i+1;
-            user = comm->opponentslog[i];
-        }else if (i==comm->index){
+            user = comm->getopponentslog(i);
+        }else if (i==comm->getIndex()){
             pos = 0;
-            user = comm->BufferName;
+            user = comm->getBufferName();
         }else{
             pos = i;
-            user = comm->opponentslog[i];
+            user = comm->getopponentslog(i);
         }
         strings_score[pos] = new wxStaticText(this, -1, wxString::Format(wxT("%s score: 0"), user), wxPoint(110, (190 + pos*10)));
     }

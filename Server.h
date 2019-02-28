@@ -14,31 +14,29 @@
 typedef wxIPV4address IPaddress;
 class Server: public wxFrame
 {
-    public:
-    // ctor(s)
-    //Frame * fr;
+public:
     Server(const wxString& title, int PL);
     ~Server();
-    // event handlers (these functions should _not_ be virtual)
+    static char* substr(char *str, int start, int length);
+
+protected:
     void OnQuit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnServerEvent(wxSocketEvent& event);
     void OnSocketEvent(wxSocketEvent& event);
-    //wxSocketBase *clients[3];
-    std::list<wxSocketBase *> clients;
-    char logins[35];
 
-    char *tabellog [3];
-    static char* substr(char *str, int start, int length);
 
-    private:
-
+private:
     wxSocketServer *sock;
     wxTextCtrl *txtRx;
     int numClients;
     int want_players;
     int losers;
-    // any class wishing to process wxWidgets events must use this macro
+    char logins[35];
+    char *tabellog [3];
+    int opponentScores[3];
+    std::list<wxSocketBase *> clients;
+
     wxDECLARE_EVENT_TABLE();
 };
 

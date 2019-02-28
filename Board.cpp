@@ -12,6 +12,7 @@ Board::Board(wxPanel* parent_t, wxFrame *fr)
     started = false;
     paused = false;
     score = 0;
+
     lvl = 1;
     curX = 0;
     curY = 0;
@@ -22,7 +23,7 @@ Board::Board(wxPanel* parent_t, wxFrame *fr)
     next.SetShape(tmp);
     ClearBoard();
 
-    std::cout << "BOARD mather - constructor vide" << std::endl;
+//    std::cout << "BOARD mather - constructor vide" << std::endl;
 }
 
 

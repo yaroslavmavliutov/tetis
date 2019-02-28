@@ -8,13 +8,10 @@
 
 #include "Board.h"
 
-//#include "wx/socket.h"
-
 
 class GamePanelOpponent : public Board{
 public:
     GamePanelOpponent(wxPanel* parent_t, wxFrame *fr);
-
     void SetMovement(char c);
 
 protected:

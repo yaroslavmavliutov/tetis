@@ -50,7 +50,7 @@ public:
         Board(wxPanel* parent_t, wxFrame *fr);
         PieceShape GetNextShape() const { return next.GetShape(); }
         void setNextOrCurrentPiece(char c, int current_next);
-        int main_score;
+
 
 
 protected:
