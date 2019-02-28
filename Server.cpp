@@ -6,7 +6,6 @@
 #include <exception>
 
 
-// frame constructor
 Server::Server(const wxString& title, int PL)
         : wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(390, 280),
                   wxDEFAULT_FRAME_STYLE ^ wxRESIZE_BORDER)
@@ -39,7 +38,6 @@ Server::Server(const wxString& title, int PL)
     txtRx = new wxTextCtrl(this, ID_TXTRX, wxT(""), wxPoint(5, 5),
                            wxSize(365, 125), wxTE_MULTILINE);
 
-    // Create the address - defaults to localhost:0 initially
     IPaddress addr;
     addr.AnyAddress();
     addr.Service(3000);
@@ -94,7 +92,7 @@ char * Server::substr(char *str, int start, int length=0) {
     int len = 0;
     for (int i = 0; str[i] != '\0'; i++)
         len++;
-    // Определить позицию последнего символа подстроки
+
     if (length > 0)
     {
         if (start + length < len)
@@ -102,9 +100,9 @@ char * Server::substr(char *str, int start, int length=0) {
     }
     else // length < 0
         len = len + length;
-    int newlen = len - start + 1; // длина подстроки
+    int newlen = len - start + 1;
     s = new char[newlen];
-    // Копирование символов подстроки
+
     int j = 0;
     for (int i = start; i<len; i++)
     {
@@ -130,7 +128,7 @@ void Server::OnAbout(wxCommandEvent& WXUNUSED(event))
 }
 
 
-// під'єднання КЛІЄНТІВ
+// client connection
 void Server::OnServerEvent(wxSocketEvent& event)
 {
     txtRx->AppendText(wxT("OnServerEvent: "));
@@ -150,8 +148,7 @@ void Server::OnServerEvent(wxSocketEvent& event)
         sockBase = sock->Accept(false);
         clients.push_back(sockBase);
     }
-    //try
-    //{
+
     if (sockBase )
     {
         IPaddress addr;
@@ -168,11 +165,6 @@ void Server::OnServerEvent(wxSocketEvent& event)
         txtRx->AppendText(wxT("Error: couldn't accept a new connection \n"));
         return;
     }
-    //}
-    //catch (exception& e)
-    //{
-    //    std::cout<<"ERROR\n "<< std::endl;
-    //}
 
 
     sockBase ->SetEventHandler( *this, SERVER_SOCKET_ID);
@@ -185,20 +177,9 @@ void Server::OnServerEvent(wxSocketEvent& event)
     size_t txn = strlen(connected);
     unsigned char len;
     len = txn;
-    //try
-    //{
     sockBase->Write(&len,1);
     sockBase->Write(&connected, len);
     txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), connected));
-    //}
-    //catch (exception& e)
-    //{
-    //    std::cout<<"ERROR\n "<< std::endl;
-    //}
-
-        //std::cout << "send start_MSG:  " << start << "\n";
-        // Enable input events again.
-     //sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 
 }
 
@@ -218,7 +199,6 @@ void Server::OnSocketEvent(wxSocketEvent& event)
         }
     }
 
-    // First, print a message
     switch (event.GetSocketEvent())
     {
         case wxSOCKET_INPUT: txtRx->AppendText(wxT("wxSOCKET_INPUT\n")); break;
@@ -260,13 +240,10 @@ void Server::OnSocketEvent(wxSocketEvent& event)
             }
 
             txtRx->AppendText(wxString::Format(wxT("Server Read x: %s \n"),wxString::FromUTF8(buf, len)));
-            //try
-           // {
                 if(strncmp( buf, "login", (size_t) 5 )==0){
-                    int n = len ;//- '0';
-//                std::cout << "login n -> " << n << std::endl;
+                    int n = len ;
                     tabellog[numClients-1] = substr(buf, 5, n-5);
-//                std::cout << "tabellog[0] -> " << tabellog[0]<< std::endl;
+
                     sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
                     //    відправлення повідомлення про старт гри
                     if(numClients == want_players){
@@ -291,18 +268,22 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                             sockBase_curr_2->Write(&len,1);
                             sockBase_curr_2->Write(&start, len);
                             txtRx->AppendText(wxString::Format(wxT("send start_MSG : %s \n"), start));
-                            //std::cout << "send start_MSG:  " << start << "\n";
                             // Enable input events again.
                             sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 
                         }
-
-
                     }
-
                 }else if(strncmp( buf, "lose", (size_t) 4 )==0) {
                     losers++;
-                    std::cout<<"losers-> "<<losers<< " NumCli -> "<< numClients << std::endl;
+
+                    int pos;
+                    for(int i = 0; i<numClients; i++){
+                        if(strncmp( Server::substr(buf, 4, strlen(tabellog[i])), tabellog[i], (size_t) strlen(tabellog[i]) )==0) {
+                            int tmp_score = std::stoi( Server::substr(buf, (4+strlen(tabellog[i])), (len - 4 - strlen(tabellog[i]))) );
+                            opponentScores[i] = tmp_score;
+                        }
+                    }
+
                     wxSocketBase *sockBase_curr_2;
                     for(auto it = clients.begin(); it != clients.end(); ++it){
                         sockBase_curr_2 = *it;
@@ -319,20 +300,20 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                         sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
 
                     }
-                    std::cout<<"losers-> "<<losers<< " NumCli -> "<< numClients << std::endl;
                     if(losers == numClients) {
                         losers = 0;
                         char gameover[15] = "gameover";
+                        int max = -1;
+                        int max_index = -1;
                         for (int i = 0; i < numClients; i++) {
-                            if (strncmp(Server::substr(buf, 4, strlen(tabellog[i])), tabellog[i],
-                                        (size_t) strlen(tabellog[i])) == 0) {
-                                strcat(gameover, tabellog[i]);
-                                break;
+                            if(opponentScores[i]>max) {
+                                max = opponentScores[i];
+                                max_index = i;
                             }
                         }
-
+                        strcat(gameover, tabellog[max_index]);
                         size_t txn = strlen(gameover);
-                        std::cout<<"GAMEOVER MSG-> "<<gameover << std::endl;
+//                        std::cout<<"GAMEOVER MSG-> "<<gameover << std::endl;
                         unsigned char len;
                         len = txn;
 
@@ -342,13 +323,9 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                             sockBase_curr_2->Write(&len, 1);
                             sockBase_curr_2->Write(&gameover, len);
                             txtRx->AppendText(wxString::Format(wxT("send gameover MSG : %s \n"), gameover));
-                            //std::cout << "send start_MSG:  " << start << "\n";
-                            // Enable input events again.
                             sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-
                         }
                     }
-
                 }else{
                     wxSocketBase *sockBase_curr_2;
                     for(auto it = clients.begin(); it != clients.end(); ++it){
@@ -367,12 +344,6 @@ void Server::OnSocketEvent(wxSocketEvent& event)
 
                     }
                 }
-            //}
-            //catch (exception& e)
-            //{
-            //    std::cout<<"ERROR\n "<< std::endl;
-            //}
-
 
             break;
         }

@@ -12,7 +12,7 @@ GamePanelOpponent::GamePanelOpponent(wxPanel* parent_t, wxFrame *fr)
 {
     started = true;
 
-    std::cout << "GamePanelOpponent - constructor vide" << std::endl;
+//    std::cout << "GamePanelOpponent - constructor vide" << std::endl;
 }
 
 

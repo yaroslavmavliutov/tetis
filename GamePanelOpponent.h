@@ -8,8 +8,6 @@
 
 #include "Board.h"
 
-//#include "wx/socket.h"
-
 
 class GamePanelOpponent : public Board{
 public:
