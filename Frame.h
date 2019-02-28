@@ -17,7 +17,6 @@
 #include <cstring>
 
 
-//#define __GXX_ABI_VERSION 1010
 typedef wxIPV4address IPaddress;
 
 // Define a new frame type: this is going to be our main frame
@@ -39,6 +38,7 @@ public:
     std::string getUserName();
     int getIndex();
     char *getopponentslog(int i);
+    int getwant_players();
 
     wxMenu *file; // File
 
@@ -54,7 +54,7 @@ protected:
     void OnAbout(wxCommandEvent& event);
 
     // event handlers for CLIENT Socket
-    void OpenConnection();
+    void OpenConnection(bool t);
     void CloseConnection();
     void OnSocketEvent(wxSocketEvent& event);
     void ClientSocket();

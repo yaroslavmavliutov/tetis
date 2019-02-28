@@ -44,13 +44,36 @@ Server::Server(const wxString& title, int PL)
     txtRx->AppendText(wxString::Format(wxT("Creating server at %s:%u \n")
             ,addr.IPAddress(), addr.Service()));
 
+
+// get IP addr//
+
+    wxIPV4address remote;
+    remote.Hostname(_T("www.wxwidgets.org"));
+    remote.Service(80);
+
+
+    wxIPV4address local;
+
+    wxSocketClient client;
+    if(client.Connect(remote)) client.GetLocal(local);
+
+    wxString ipAddr=local.IPAddress();
+
+    wxMessageDialog *dial = new wxMessageDialog(NULL,
+                                                ipAddr, wxT("Your IP"), wxOK);
+    dial->ShowModal();
+
+
     // Create the socket
     sock = new wxSocketServer(addr);
 
     // We use IsOk() here to see if the server is really listening
     if (!sock->IsOk()){
         txtRx->AppendText(wxString::Format(wxT("Could not listen at the specified port !\n")));
-    return;
+        dial = new wxMessageDialog(NULL,
+                                   wxT("Network error"), wxT("Warning"), wxOK);
+        dial->ShowModal();
+        return;
     }
 
     IPaddress addrReal;
@@ -184,7 +207,7 @@ void Server::OnServerEvent(wxSocketEvent& event)
 }
 
 
-// сервер читає отримане повідомлення і відправляє всім його
+// the server reads the received message and sends it all
 void Server::OnSocketEvent(wxSocketEvent& event)
 {
     txtRx->AppendText(wxT("OnSocketEvent: "));
@@ -240,12 +263,16 @@ void Server::OnSocketEvent(wxSocketEvent& event)
             }
 
             txtRx->AppendText(wxString::Format(wxT("Server Read x: %s \n"),wxString::FromUTF8(buf, len)));
-                if(strncmp( buf, "login", (size_t) 5 )==0){
+                    if(strncmp( buf, "wantpl", (size_t) 6 )==0){
+
+                        want_players = std::stoi( substr(buf, 6, 1));
+                        sockBase_curr->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+                    }else if(strncmp( buf, "login", (size_t) 5 )==0){
                     int n = len ;
                     tabellog[numClients-1] = substr(buf, 5, n-5);
 
                     sockBase->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-                    //    відправлення повідомлення про старт гри
+                    // Sending a message about the game's start
                     if(numClients == want_players){
                         //send start to all players
                         char start[37] = "start";
@@ -275,7 +302,7 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                     }
                 }else if(strncmp( buf, "lose", (size_t) 4 )==0) {
                     losers++;
-
+                    //keeps the final score of rivals
                     int pos;
                     for(int i = 0; i<numClients; i++){
                         if(strncmp( Server::substr(buf, 4, strlen(tabellog[i])), tabellog[i], (size_t) strlen(tabellog[i]) )==0) {
@@ -287,7 +314,7 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                     wxSocketBase *sockBase_curr_2;
                     for(auto it = clients.begin(); it != clients.end(); ++it){
                         sockBase_curr_2 = *it;
-                        // НЕ треба відправляти самому собі дані
+                        // DO NOT need to send data to yourself
                         if(sockBase_curr_2 == sockBase_curr){
                             sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
                             continue;
@@ -330,7 +357,7 @@ void Server::OnSocketEvent(wxSocketEvent& event)
                     wxSocketBase *sockBase_curr_2;
                     for(auto it = clients.begin(); it != clients.end(); ++it){
                         sockBase_curr_2 = *it;
-                        // НЕ треба відправляти самому собі дані
+                        // DO NOT need to send data to yourself
                         if(sockBase_curr_2 == sockBase_curr){
                             sockBase_curr_2->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
                             continue;

@@ -3,6 +3,8 @@
 #include "Piece.h"
 #include "InfoPanel.h"
 #include "Frame.h"
+
+#include <exception>
 #include <chrono>
 
 GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int m_nb_opponent) : Board(parent_t, fr)
@@ -18,6 +20,7 @@ GamePanel::GamePanel(wxPanel* parent_t, wxFrame *fr, wxSocketClient *m_sock, int
 
 //    std::cout << "GamePanel - constructor" << std::endl;
 }
+
 
 void GamePanel::Start()
 {
@@ -219,7 +222,7 @@ void GamePanel::RemoveFullLines()
 
     Frame *comm = (Frame *) panel->GetParent();
     comm->getm_rp()->strings_score[0]->SetLabel(wxString::Format(wxT("%s score: %d"), comm->getUserName(), score));
-
+    // send your score to opponents
     if (nb_opponent > 0) {
         char score_char[15] = "score";
         std::string sc = std::to_string(score);
@@ -231,13 +234,15 @@ void GamePanel::RemoveFullLines()
 
         unsigned char len;
         len = txn;
-        sock->Write(&len, 1);//send the length of the message first
-        if (sock->Write(score_char, txn).LastCount() != txn) {
-//            std::cout << "Write error.\n";
-            return;
-        } else {
-//            std::cout << "CLIENT send score Tx: " << score_char << "\n";
+        try{
+            sock->Write(&len, 1);//send the length of the message first
+            if (sock->Write(score_char, txn).LastCount() != txn)
+                throw "Failed to send message";
+        }    catch (std::exception& e)
+        {
+            std::cout<<"ERROR Failed to send message!\n "<< std::endl;
         }
+
     }
 
     pieceFallingFinished = true;
@@ -301,7 +306,6 @@ void GamePanel::MakeNewPiece()
             sock->Write(&len, 1);
             sock->Write(&lose, len);
             sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-            comm->setServerOn(true);
         }
 
         comm->Setbusy(true);
@@ -385,16 +389,20 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
 
 
 void GamePanel::SetMovement(char c) {
-    switch (c) {
-        case 'd':
-            if (started == true) {
-                sendMoveToServer('d');
-                DropDown();
-            }
-            break;
+    try {
+        switch (c) {
+            case 'd':
+                if (started == true) {
+                    sendMoveToServer('d');
+                    DropDown();
+                }
+                break;
 
-        default:
-            //event.Skip();
-            std::cout << "Non move value" << std::endl;
+            default:
+                throw "Non move value";
+        }
+    }catch (std::exception& e)
+    {
+        std::cout<<"ERROR Non move value in GamePanel::SetMovement.\n "<< std::endl;
     }
 }
