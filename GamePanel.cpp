@@ -431,7 +431,6 @@ void GamePanel::sendShapeToServer(PieceShape ps, int curr_or_next) {
     }
 }
 
-
 void GamePanel::SetMovement(char c) {
     switch (c) {
         case 'd':

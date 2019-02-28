@@ -112,7 +112,7 @@ void Frame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
 
 // відкриття клієнтського сокету
-void Frame:: ClientSocket(){
+void Frame::ClientSocket(){
 
     sock = new wxSocketClient();
 
